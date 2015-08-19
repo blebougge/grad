@@ -1,0 +1,3 @@
+A repository for my practical exercises on my graduation.
+
+Hope that code doesn't kill anyone...
