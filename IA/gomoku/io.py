@@ -5,16 +5,13 @@ Input and console functions
 """
 console = "> "
 
-def ask():
-    return raw_input(console)
+def ask(message=None):
+	if message != None:
+		s = "%s\n%s" % (message, console)
+	else:
+		s = console
+	return raw_input(s)
 
-def ask(message):
-    s = "%s\n%s" % (message, console)
-    return raw_input(s)
-
-def ask_num():
-    return int(ask())
-
-def ask_num(message):
+def ask_num(message=None):
     return int(ask(message))
 

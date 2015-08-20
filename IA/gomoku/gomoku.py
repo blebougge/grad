@@ -14,4 +14,5 @@ def play():
 	print "This is a Gomoku-game. Type your deserved option: "
 
 play()
+print io.ask()
 print io.ask_num("Insert a number!")
