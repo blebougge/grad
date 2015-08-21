@@ -1,5 +1,4 @@
-# caian 20/08/2015
-
+# caian 20/08/2015 
 """
 Gomoku Game.
 """
@@ -11,42 +10,75 @@ menu = {
 	0 : 'exit',
 	1 : 'Play!(just humans)'
 }
+# Size of matrix
+SIZE = 5 
 
-"""
-Start menu.
-"""
+# Start menu.
 def start_menu():
 	for i in menu:
 		print("%d : %s" % (i, menu[i]))
 	return ask_num("Chose one!")
 
-"""
-Fill matrix function
-"""
-def init_m(m):
-	for i in range(5):
-		for j in range(5):
-			m.__setitem__(tuple((i,j)),'+') 
-	print(m)
+# Type of players
+players = {
+	0 : 'O',
+	1 : 'X',
+	2 : 'C'
+}
 
-"""
-Play function.
-"""
+# Turn function.
+def turn(player, m):
+	if player == players[2]:
+		computer_turn()
+		return
+	ret = m
+	print("Player %s, do your move(chose between 1 an %d, plz)" % (player, SIZE))
+	col = ask_num("Chose a column")
+	row = ask_num("Chose a row")
+	ret[row-1,col-1] = player
+	return ret
+
+# Validate turn
+def validate_turn():
+	turn = ask("Is that your move?(\'s\' ou \'n\')")
+	if turn == 's':
+		return True
+	return False 
+
+# Play function.
 def play():
 	print("This is a Gomoku-game. Type your deserved option: ")
 	option = start_menu()
 	if option == 0:
 		print("%s" % "bye!!")
 		return
+	m = Matrix(5,5,'+')
+	rm = m
+	print("Let's play!")
 	playing = True
-	m = Matrix(5,5)
-	init_m(m)
-	while(playing):
-		print("Let's play!")
-		col = ask_num("Chose a column")
-		row = ask_num("Chose a row")
-		m.__setitem__(tuple((row-1,col-1)), 'O')
+	valid = False
+	i = 0
+	print(m)
+	while playing:
+		while not valid:
+			print(rm)
+			print(m)
+			rm = turn(players[0], m)
+			print(rm)
+			valid = validate_turn()
+		m = rm
 		print(m)
-		playing = False
+		valid = False
+		while not valid:
+			rm = turn(players[1], m)
+			print(rm)
+			valid = validate_turn()
+		m = rm
+		print(m)
+		valid = False
+		i = i + 1
+		if i > 5:
+			playing = False
+	print("bye!! :D")
 
 play()
