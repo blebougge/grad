@@ -61,13 +61,10 @@ def play():
 	print(m)
 	while playing:
 		while not valid:
-			print(rm)
-			print(m)
 			rm = turn(players[0], m)
 			print(rm)
 			valid = validate_turn()
 		m = rm
-		print(m)
 		valid = False
 		while not valid:
 			rm = turn(players[1], m)
