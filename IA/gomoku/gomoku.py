@@ -31,12 +31,12 @@ def turn(player, m):
 	if player == players[2]:
 		computer_turn()
 		return
-	ret = m
+	r = m[(0,0):]
 	print("Player %s, do your move(chose between 1 an %d, plz)" % (player, SIZE))
 	col = ask_num("Chose a column")
 	row = ask_num("Chose a row")
-	ret[row-1,col-1] = player
-	return ret
+	r[row-1,col-1] = player
+	return r
 
 # Validate turn
 def validate_turn():
@@ -53,7 +53,7 @@ def play():
 		print("%s" % "bye!!")
 		return
 	m = Matrix(5,5,'+')
-	rm = m
+	rm = m[(0,0):]
 	print("Let's play!")
 	playing = True
 	valid = False
