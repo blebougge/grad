@@ -39,11 +39,26 @@ def turn(player, m):
 		computer_turn()
 		return
 	r = m[(0,0):]
+	playable = False
+	row = 0
+	col = 0
 	print("Player %s, do your move(chose between 1 an %d, plz)" % (player, SIZE))
-	row = ask_num("Chose a row")
-	col = ask_num("Chose a column")
+	while not playable:
+		row = ask_num("Chose a row")
+		col = ask_num("Chose a column")
+		if m[row-1,col-1] == '+':
+			playable = True
+		else:
+			print("Sorry, chose another move!")
 	r[row-1,col-1] = player
 	return r
+
+# Validate turn
+def validate_turn():
+	turn = ask("Is that your move?(\'s\' ou \'n\')")
+	if turn == 's':
+		return True
+	return False 
 
 # Check for a final state of the game
 def is_over(m):
@@ -91,13 +106,6 @@ def iterate_over(m, where):
 			back_pos += 1
 		sequence = 0
 	return False
-
-# Validate turn
-def validate_turn():
-	turn = ask("Is that your move?(\'s\' ou \'n\')")
-	if turn == 's':
-		return True
-	return False 
 
 # Play function.
 def play():
