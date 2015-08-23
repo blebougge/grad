@@ -90,8 +90,6 @@ def iterate_over(m, where):
 			sym_list = m.col(line)
 		else:
 			return False
-		#if sym_list[0] != '+':
-		#	sequence += 1
 		back_pos = 0
 		for symbol in sym_list:
 			if symbol != '+':
