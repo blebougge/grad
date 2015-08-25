@@ -11,13 +11,20 @@ menu = {
     1 : 'Play!(just humans)'
 }
 # Size of matrix
-SIZE = 5 
+SIZE = 15 
+# Sequence to win a game
+SEQUENCE = 5
+# Max sequences of turns
+MAX_TURNS = 20
+
+# Directions to check: Horizontal, Vertical and Diagonal
+directions = ['H','V','D']
 
 # Start menu.
 def start_menu():
-    for i in menu:
-        print("%d : %s" % (i, menu[i]))
-    return ask_num("Chose one!")
+	for option in menu:
+		print("%d : %s" % (option, menu[option]))
+	return ask_num("Chose one!")
 
 # Type of players
 players = {
@@ -28,18 +35,23 @@ players = {
 
 # Turn function.
 def turn(player, m):
-    if player == players[2]:
-        computer_turn()
-        return
-    r = m[(0,0):]
-    print("Player %s, do your move(chose between 1 an %d, plz)" % (player, SIZE))
-    col = -1
-    row = -1
-    while col < 0 and row < 0:
-        col = ask_num("Chose a column(positive, plz)")
-        row = ask_num("Chose a row(positive, plz)")
-    r[row-1,col-1] = player
-    return r
+	if player == players[2]:
+		computer_turn()
+		return
+	r = m[(0,0):]
+	playable = False
+	row = 0
+	col = 0
+	print("Player %s, do your move(chose between 1 an %d, plz)" % (player, SIZE))
+	while not playable:
+		row = ask_num("Chose a row")
+		col = ask_num("Chose a column")
+		if m[row-1,col-1] == '+':
+			playable = True
+		else:
+			print("Sorry, chose another move!")
+	r[row-1,col-1] = player
+	return r
 
 # Validate turn
 def validate_turn():
@@ -47,6 +59,51 @@ def validate_turn():
     if turn == 's':
         return True
     return False 
+
+# Check for a final state of the game
+def is_over(m):
+	r = False
+	for direction in directions:
+		r = (r or check_over(m, direction))
+	return r
+
+# Check if its over on one direction
+def check_over(m, direction):
+	print(direction)
+	if direction == 'H':
+		return iterate_over(m,'row')
+	elif direction == 'V':
+		return iterate_over(m,'col')
+	elif direction == 'D':
+		return False
+	else:
+		return False
+	
+# Iterate over a line to search a sequence of 5
+def iterate_over(m, where):
+	sequence = 0
+	sym_list = []
+	for line in range(0,SIZE):
+		if where == 'row':
+			sym_list = m.row(line)
+		elif where == 'col':
+			sym_list = m.col(line)
+		else:
+			return False
+		back_pos = 0
+		for symbol in sym_list:
+			if symbol != '+':
+				if (symbol == sym_list[back_pos]):
+					sequence += 1
+				else:
+					sequence = 0
+			else:
+				sequence = 0
+			if sequence == SEQUENCE:
+				return True
+			back_pos += 1
+		sequence = 0
+	return False
 
 # Play function.
 def play():
