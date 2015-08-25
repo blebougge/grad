@@ -62,48 +62,69 @@ def validate_turn():
 
 # Check for a final state of the game
 def is_over(m):
-	r = False
-	for direction in directions:
-		r = (r or check_over(m, direction))
-	return r
+    r = False
+    for direction in directions:
+        r = (r or check_over(m, direction))
+    return r
 
 # Check if its over on one direction
 def check_over(m, direction):
-	print(direction)
-	if direction == 'H':
-		return iterate_over(m,'row')
-	elif direction == 'V':
-		return iterate_over(m,'col')
-	elif direction == 'D':
-		return False
-	else:
-		return False
+    print(direction)
+    if direction == 'H':
+        return iterate_over(m,'row')
+    elif direction == 'V':
+        return iterate_over(m,'col')
+    elif direction == 'D':
+        return iterate_diagonal(m)
+    else:
+        return False
 	
 # Iterate over a line to search a sequence of 5
 def iterate_over(m, where):
-	sequence = 0
-	sym_list = []
-	for line in range(0,SIZE):
-		if where == 'row':
-			sym_list = m.row(line)
-		elif where == 'col':
-			sym_list = m.col(line)
-		else:
-			return False
-		back_pos = 0
-		for symbol in sym_list:
-			if symbol != '+':
-				if (symbol == sym_list[back_pos]):
-					sequence += 1
-				else:
-					sequence = 0
-			else:
-				sequence = 0
-			if sequence == SEQUENCE:
-				return True
-			back_pos += 1
-		sequence = 0
-	return False
+    sequence = 0
+    sym_list = []
+    for line in range(0,SIZE):
+        if where == 'row':
+            sym_list = m.row(line)
+        elif where == 'col':
+            sym_list = m.col(line)
+        else:
+            return False
+        back_pos = 0
+        for symbol in sym_list:
+            if symbol != '+':
+                if symbol == sym_list[back_pos]:
+                    sequence += 1
+                else:
+                    sequence = 0
+            else:
+			    sequence = 0
+            if sequence == SEQUENCE:
+                return True
+            back_pos += 1
+        sequence = 0
+    return False
+
+# Iterate over the diagonals to search a sequence of 5
+def iterate_diagonal(m):
+    sequence = 0
+    sym_list = []
+    for diagonal in range(-29,30):
+        back_pos = 0
+        sym_list = m.diagonal(diagonal)
+        for symbol in sym_list:
+            if symbol != '+':
+                if symbol == sym_list[back_pos]:
+                    sequence += 1
+                else:
+                    sequence = 0
+            else:
+                sequence = 0
+            if sequence == SEQUENCE:
+                return True
+            back_pos += 1
+        sequence = 0
+    return False
 
 # Play function.
 def play():
@@ -112,7 +133,7 @@ def play():
     if option == 0:
         print("%s" % "bye!!")
         return
-    m = Matrix(5,5,'+')
+    m = Matrix(SIZE,SIZE,'+')
     rm = m[(0,0):]
     print("Let's play!")
     playing = True
@@ -121,12 +142,12 @@ def play():
     print(m)
     while playing:
         while not valid:
-            print(rm)
-            print(m)
             rm = turn(players[0], m)
             print(rm)
             valid = validate_turn()
         m = rm
+        if is_over(m):
+            break
         print(m)
         valid = False
         while not valid:
@@ -134,10 +155,12 @@ def play():
             print(rm)
             valid = validate_turn()
         m = rm
+        if is_over(m):
+            break
         print(m)
         valid = False
         i = i + 1
-        if i > 5:
+        if i > 20:
             playing = False
     print("bye!! :D")
 

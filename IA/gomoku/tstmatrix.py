@@ -3,7 +3,7 @@
 
 from matrix import Matrix
 
-m = Matrix(15,15):
+m = Matrix(15,15)
 for i in range(len(m)):
     m[i] = i
 
