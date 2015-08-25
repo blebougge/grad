@@ -7,78 +7,81 @@ from matrix import Matrix
 from io import *
 
 menu = {
-	0 : 'exit',
-	1 : 'Play!(just humans)'
+    0 : 'exit',
+    1 : 'Play!(just humans)'
 }
 # Size of matrix
 SIZE = 5 
 
 # Start menu.
 def start_menu():
-	for i in menu:
-		print("%d : %s" % (i, menu[i]))
-	return ask_num("Chose one!")
+    for i in menu:
+        print("%d : %s" % (i, menu[i]))
+    return ask_num("Chose one!")
 
 # Type of players
 players = {
-	0 : 'O',
-	1 : 'X',
-	2 : 'C'
+    0 : 'O',
+    1 : 'X',
+    2 : 'C'
 }
 
 # Turn function.
 def turn(player, m):
-	if player == players[2]:
-		computer_turn()
-		return
-	r = m[(0,0):]
-	print("Player %s, do your move(chose between 1 an %d, plz)" % (player, SIZE))
-	col = ask_num("Chose a column")
-	row = ask_num("Chose a row")
-	r[row-1,col-1] = player
-	return r
+    if player == players[2]:
+        computer_turn()
+        return
+    r = m[(0,0):]
+    print("Player %s, do your move(chose between 1 an %d, plz)" % (player, SIZE))
+    col = -1
+    row = -1
+    while col < 0 and row < 0:
+        col = ask_num("Chose a column(positive, plz)")
+        row = ask_num("Chose a row(positive, plz)")
+    r[row-1,col-1] = player
+    return r
 
 # Validate turn
 def validate_turn():
-	turn = ask("Is that your move?(\'s\' ou \'n\')")
-	if turn == 's':
-		return True
-	return False 
+    turn = ask("Is that your move?(\'s\' ou \'n\')")
+    if turn == 's':
+        return True
+    return False 
 
 # Play function.
 def play():
-	print("This is a Gomoku-game. Type your deserved option: ")
-	option = start_menu()
-	if option == 0:
-		print("%s" % "bye!!")
-		return
-	m = Matrix(5,5,'+')
-	rm = m[(0,0):]
-	print("Let's play!")
-	playing = True
-	valid = False
-	i = 0
-	print(m)
-	while playing:
-		while not valid:
-			print(rm)
-			print(m)
-			rm = turn(players[0], m)
-			print(rm)
-			valid = validate_turn()
-		m = rm
-		print(m)
-		valid = False
-		while not valid:
-			rm = turn(players[1], m)
-			print(rm)
-			valid = validate_turn()
-		m = rm
-		print(m)
-		valid = False
-		i = i + 1
-		if i > 5:
-			playing = False
-	print("bye!! :D")
+    print("This is a Gomoku-game. Type your deserved option: ")
+    option = start_menu()
+    if option == 0:
+        print("%s" % "bye!!")
+        return
+    m = Matrix(5,5,'+')
+    rm = m[(0,0):]
+    print("Let's play!")
+    playing = True
+    valid = False
+    i = 0
+    print(m)
+    while playing:
+        while not valid:
+            print(rm)
+            print(m)
+            rm = turn(players[0], m)
+            print(rm)
+            valid = validate_turn()
+        m = rm
+        print(m)
+        valid = False
+        while not valid:
+            rm = turn(players[1], m)
+            print(rm)
+            valid = validate_turn()
+        m = rm
+        print(m)
+        valid = False
+        i = i + 1
+        if i > 5:
+            playing = False
+    print("bye!! :D")
 
 play()
