@@ -46,17 +46,18 @@ So, thats the form I'll be doing this.
             self.transitions = {}
             self.start = None
             self.accept = []
-        self.states = states
-        self.alphabet = alphabet
-        self.transitions = transitions
-        if not start in states:
-            self.start = None
-        else:
-            self.start = start
-        if not accept in states:
-            self.accept = []
-        else:
-            self.accept = accept
+		else:
+	        self.states = states
+		    self.alphabet = alphabet
+			self.transitions = transitions
+	        if not start in states:
+		        self.start = None
+			else:
+				self.start = start
+	        if not accept in states:
+		        self.accept = []
+			else:
+				self.accept = accept
 
         self.actual_state = self.start
 
@@ -131,7 +132,8 @@ So, thats the form I'll be doing this.
 
     def walk(self, letter):
         """
-        You can walk one step by one. The return will be the actual state.
+        You can walk one step by one on transitions.
+		The return will be the actual state. If hit an problem: None.
         """
         if not letter in self.alphabet:
             return None
