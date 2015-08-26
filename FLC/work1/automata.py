@@ -135,8 +135,8 @@ So, thats the form I'll be doing this.
         """
         if not letter in self.alphabet:
             return None
-        self.actual = transitions[self.actual][letter]
-        return self.actual
+        self.actual_state = transitions[self.actual_state][letter]
+        return self.actual_state
 
     def detect(self, word):
         """
