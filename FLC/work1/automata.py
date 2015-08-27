@@ -58,7 +58,7 @@ class Automata(object):
             if not accept in states:
                 self.accept = []
             else:
-                self.accept = accept
+                self.accept = [accept]
 
         self.actual_state = self.start
 
@@ -84,6 +84,15 @@ class Automata(object):
             self.addstate(state)
             self.addstart(state)
 
+    def addaccept(self, accept):
+        """
+        Adds a accept state.
+        """
+        if not accept in self.states:
+            self.states.append(accept)
+        if not accept in self.accept:
+            self.accept.append(accept)
+
     def rmstate(self, state):
         """
         Remove a specific state including transitions.
@@ -92,8 +101,8 @@ class Automata(object):
             self.states.remove(state)
         if state == self.start:
             self.start = None
-        if state == self.accept:
-            self.accept = None
+        if state in self.accept:
+            self.accept.remove(state)
         for s in self.states:
             self.rmtransition([s, state])
         del self.transitions[state]
@@ -104,6 +113,9 @@ class Automata(object):
         """
         if not letter in self.alphabet:
             self.alphabet.append(letter)
+        for state in self.transitions.keys():
+            if not letter in self.transitions[state].keys():
+                self.transitions[state][letter] = None
 
     def rmletter(self, letter):
         """
@@ -111,21 +123,24 @@ class Automata(object):
         """
         if letter in self.alphabet:
             self.alphabet.remove(letter)
+        for state in self.transitions.keys():
+            while letter in self.transitions[state].keys():
+                del self.transitions[state][letter]
 
     def addtransition(self, transition):
         """
         Adds a transition. The transition must be in the form:
         transition = { 'qX' : ['z', 'qY'] }
         """
-        for key in transition:
-            if not key in self.states:
-                self.states.addstate(key)
-            if self.transitions[key] == None:
-                self.transitions[key] = {
-                    transition[key][0] : transition[key][1]
+        for state in transition:
+            if not state in self.states:
+                self.states.addstate(state)
+            if self.transitions[state] == None:
+                self.transitions[state] = {
+                    transition[state][0] : transition[state][1]
                 }
             else:
-                self.transitions[key][0] = transition[key][1]
+                self.transitions[state][0] = transition[state][1]
 
     def rmtransition(self, transition):
         """
@@ -147,7 +162,7 @@ class Automata(object):
         """
         if not letter in self.alphabet:
             return None
-        self.actual_state = transitions[self.actual_state][letter]
+        self.actual_state = self.transitions[self.actual_state][letter]
         return self.actual_state
 
     def detect(self, word):
@@ -155,9 +170,9 @@ class Automata(object):
         Detect if it is a valid word.
         """
         for letter in word:
-            end_state = walk(letter)
+            end_state = self.walk(letter)
             if end_state == None:
                 break
-        if end_state in accept:
+        if end_state in self.accept:
             return True
         return False
