@@ -196,5 +196,7 @@ class Automata(object):
     def determinize(self):
         """
         When you have a non-deterministic Automata and you want to find a deterministic equivalent form, try use this.
-        It will return the new automata, deterministic one.
+        It will return the new automata, deterministic one or None if the automata already deterministic.
         """
+        if self.isdeterministic():
+            return None
