@@ -62,6 +62,12 @@ class Automata(object):
 
         self.actual_state = self.start
 
+    def showstates(self):
+        """
+        Return a set of all valid states.
+        """
+        return list(self.states)
+
     def addstate(self, state):
         """
         Adds a state to the automata states.
