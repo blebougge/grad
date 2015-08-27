@@ -86,12 +86,17 @@ class Automata(object):
 
     def rmstate(self, state):
         """
-        Remove a specific state,
+        Remove a specific state including transitions.
         """
         if state in self.states:
             self.states.remove(state)
         if state == self.start:
             self.start = None
+        if state == self.accept:
+            self.accept = None
+        for s in self.states:
+            self.rmtransition([s, state])
+        del self.transitions[state]
 
     def addletter(self, letter):
         """
@@ -115,7 +120,7 @@ class Automata(object):
         for key in transition:
             if not key in self.states:
                 self.states.addstate(key)
-            if transitions[key] == None:
+            if self.transitions[key] == None:
                 self.transitions[key] = {
                     transition[key][0] : transition[key][1]
                 }
@@ -124,18 +129,17 @@ class Automata(object):
 
     def rmtransition(self, transition):
         """
-        Remove a transition. The transition mus be in the form:
-        transition = { 'qX' : 'z'}
+        Remove a transition. The transition must be in the form:
+        transition = ['qX', 'qY']
         You cannot remove a state transition without removing the state.
         Here you can only set the transition to None.
         """
-        for key in transition:
-            if transitions[key] == None:
-                self.transitions[key] = {
-                    transition[key] : None
-                }
-            else:
-                self.transitions[key][transition[key]] = None
+        letter = ''
+        for key in self.transitions[transition[0]].keys():
+            if self.transitions[transition[0]][key] == transition[1]:
+                letter = key
+                self.transitions[transition[0]][letter] = None
+                return
 
     def walk(self, letter):
         """
