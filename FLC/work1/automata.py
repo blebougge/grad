@@ -139,7 +139,6 @@ class Automata(object):
             if self.transitions[transition[0]][key] == transition[1]:
                 letter = key
                 self.transitions[transition[0]][letter] = None
-                return
 
     def walk(self, letter):
         """
