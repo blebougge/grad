@@ -80,9 +80,10 @@ fsm = Automata(states, alphabet, transitions, start, accept)
 fsm1 = copy.deepcopy(fsm)
 print("Original states:")
 print_tst(states,alphabet,transitions,start,accept)
-simple_tst(states, alphabet, transitions, start, accept)
+# simple_tst(states, alphabet, transitions, start, accept)
 
 print("Automata to next tests: ")
+# fsm1.addtransition({'q0' : ['b', 'q3']})
 print_fsm(fsm1)
 letter = 'b'
 walk_tst(fsm1, letter)

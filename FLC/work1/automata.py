@@ -8,7 +8,7 @@ class Automata(object):
         d   - a transition function (d : Q x E -> Q)
         q0  - a start state (q0 is in Q)
         F   - a set of accept states (F have some states from Q)
-    In my implementation, i'll assume that the form of data comes are in the following form:
+    In my implementation, I'll assume that the form of data comes are in the following form:
         M(object) = {
             states = ['q0','q1']            # or eventually ['q0', 'q1']
             alphabet = ['a','b','0','1']    # the empty transition is 'e'
@@ -22,9 +22,9 @@ class Automata(object):
             'q0' : {
                 'a' : ['q1'],
                 'b' : ['q0','q1'],
-                'e' : [],           # [] = dead state
+                'e' : [],           # e = Empty transition
                 '1' : ['q1'],
-                '2' : []},
+                '2' : []},          # [] = dead state
             'q1' : {
                 'a' : ['q1'],
                 'b' : ['q0','q1'],
@@ -139,7 +139,7 @@ class Automata(object):
                 self.transitions[state] = {
                     transition[state][0] : [transition[state][1]]
                 }
-            else:
+            elif not transition[state][1] in self.transitions[state][transition[state][0]]:
                 self.transitions[state][transition[state][0]].append(transition[state][1])
 
     def rmtransition(self, transition):
@@ -161,20 +161,40 @@ class Automata(object):
         """
         if not letter in self.alphabet:
             return None
-        if len(self.transitions[self.actual_state]) > 1:
+        if not self.isdeterministic():
             return None
-        self.actual_state = self.transitions[self.actual_state][letter]
+        self.actual_state = self.transitions[self.actual_state][letter][0]
         return self.actual_state
 
     def detect(self, word):
         """
         Detect if it is a valid word.
         """
+        if not self.isdeterministic():
+            return False
         for letter in word:
             end_state = self.walk(letter)
             if end_state == None:
-                print("Non-deterministic Automata!")
                 break
         if end_state in self.accept:
             return True
         return False
+
+    def isdeterministic(self):
+        """
+        Returns True if automata is deterministic and False if not.
+        Remember: 'e' letter is the Empty transition.
+        """
+        if 'e' in self.alphabet:
+            return False
+        for state in self.transitions:
+            for letter in self.transitions[state]:
+                if len(self.transitions[state][letter]) > 1:
+                    return False
+        return True
+
+    def determinize(self):
+        """
+        When you have a non-deterministic Automata and you want to find a deterministic equivalent form, try use this.
+        It will return the new automata, deterministic one.
+        """
