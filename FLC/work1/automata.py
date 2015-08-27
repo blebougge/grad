@@ -1,40 +1,41 @@
 # caian 26/08/2015
 
 class Automata(object):
-"""
-Automata definition: M is a 5-tuple (Q,E,d,q0,F) where
-    Q   - finite set of states
-    E   - finite set of simbols called the alphabet
-    d   - a transition function (d : Q x E -> Q)
-    q0  - a start state (q0 is in Q)
-    F   - a set of accept states (F have some states from Q)
-In my implementation, i'll assume that the form of data comes are in the following form:
-    M(object) = {
-        states = ['q0','q1']            # or eventually ['q0', 'q1']
-        alphabet = ['a','b','0','1']    # the empty transition is 'e'
-        transitions = {}                # described below
-        start = 'q0'                    # start state
-        accept = ['q1']                 # always a list
-    }
+    """
+    Automata definition: M is a 5-tuple (Q,E,d,q0,F) where
+        Q   - finite set of states
+        E   - finite set of simbols called the alphabet
+        d   - a transition function (d : Q x E -> Q)
+        q0  - a start state (q0 is in Q)
+        F   - a set of accept states (F have some states from Q)
+    In my implementation, i'll assume that the form of data comes are in the following form:
+        M(object) = {
+            states = ['q0','q1']            # or eventually ['q0', 'q1']
+            alphabet = ['a','b','0','1']    # the empty transition is 'e'
+            transitions = {}                # described below
+            start = 'q0'                    # start state
+            accept = ['q1']                 # always a list
+        }
 
-transition is defined by the following form:
-    transitions = {
-        'q0' : {
-            'a' : 'q1',
-            'b' : 'q0',
-            'e' : None,     # None is a dead state
-            '1' : 'q1',
-            '2' : None},
-        'q1' : {
-            'a' : 'q1',
-            'b' : 'q0',
-            'e' : None,
-            '1' : 'q1',
-            '2' : None}
-    }
+    transition is defined by the following form:
+        transitions = {
+            'q0' : {
+                'a' : 'q1',
+                'b' : 'q0',
+                'e' : None,     # None is a dead state
+                '1' : 'q1',
+                '2' : None},
+            'q1' : {
+                'a' : 'q1',
+                'b' : 'q0',
+                'e' : None,
+                '1' : 'q1',
+                '2' : None}
+        }
 
-So, thats the form I'll be doing this.    
-"""
+    So, thats the form I'll be doing this.
+    """
+
     def __init__(self, states=None, alphabet=None, transitions=None, start=None, accept=None):
         """
         Automata() -> empty automata
@@ -46,18 +47,18 @@ So, thats the form I'll be doing this.
             self.transitions = {}
             self.start = None
             self.accept = []
-		else:
-	        self.states = states
-		    self.alphabet = alphabet
-			self.transitions = transitions
-	        if not start in states:
-		        self.start = None
-			else:
-				self.start = start
-	        if not accept in states:
-		        self.accept = []
-			else:
-				self.accept = accept
+        else:
+            self.states = states
+            self.alphabet = alphabet
+            self.transitions = transitions
+            if not start in states:
+                self.start = None
+            else:
+                self.start = start
+            if not accept in states:
+                self.accept = []
+            else:
+                self.accept = accept
 
         self.actual_state = self.start
 
@@ -133,7 +134,7 @@ So, thats the form I'll be doing this.
     def walk(self, letter):
         """
         You can walk one step by one on transitions.
-		The return will be the actual state. If hit an problem: None.
+        The return will be the actual state. If hit an problem: None.
         """
         if not letter in self.alphabet:
             return None
