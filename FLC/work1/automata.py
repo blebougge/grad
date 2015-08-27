@@ -20,17 +20,17 @@ class Automata(object):
     transition is defined by the following form:
         transitions = {
             'q0' : {
-                'a' : 'q1',
-                'b' : 'q0',
-                'e' : None,     # None is a dead state
-                '1' : 'q1',
-                '2' : None},
+                'a' : ['q1'],
+                'b' : ['q0','q1'],
+                'e' : [],           # [] = dead state
+                '1' : ['q1'],
+                '2' : []},
             'q1' : {
-                'a' : 'q1',
-                'b' : 'q0',
-                'e' : None,
-                '1' : 'q1',
-                '2' : None}
+                'a' : ['q1'],
+                'b' : ['q0','q1'],
+                'e' : [],
+                '1' : ['q1'],
+                '2' : []}
         }
 
     So, thats the form I'll be doing this.
@@ -115,7 +115,7 @@ class Automata(object):
             self.alphabet.append(letter)
         for state in self.transitions.keys():
             if not letter in self.transitions[state].keys():
-                self.transitions[state][letter] = None
+                self.transitions[state][letter] = []
 
     def rmletter(self, letter):
         """
@@ -135,12 +135,12 @@ class Automata(object):
         for state in transition:
             if not state in self.states:
                 self.states.addstate(state)
-            if self.transitions[state] == None:
+            if len(self.transitions[state]) == 0:
                 self.transitions[state] = {
-                    transition[state][0] : transition[state][1]
+                    transition[state][0] : [transition[state][1]]
                 }
             else:
-                self.transitions[state][0] = transition[state][1]
+                self.transitions[state][transition[state][0]].append(transition[state][1])
 
     def rmtransition(self, transition):
         """
@@ -149,18 +149,19 @@ class Automata(object):
         You cannot remove a state transition without removing the state.
         Here you can only set the transition to None.
         """
-        letter = ''
-        for key in self.transitions[transition[0]].keys():
-            if self.transitions[transition[0]][key] == transition[1]:
-                letter = key
-                self.transitions[transition[0]][letter] = None
+        for letter in self.transitions[transition[0]].keys():
+            if transition[1] in self.transitions[transition[0]][letter]:
+                self.transitions[transition[0]][letter].remove(transition[1])
 
     def walk(self, letter):
         """
         You can walk one step by one on transitions.
         The return will be the actual state. If hit an problem: None.
+        If the automata is non-deterministic(oh boy..) and somewhere hit a dual-state, return None. 
         """
         if not letter in self.alphabet:
+            return None
+        if len(self.transitions[self.actual_state]) > 1:
             return None
         self.actual_state = self.transitions[self.actual_state][letter]
         return self.actual_state
@@ -172,6 +173,7 @@ class Automata(object):
         for letter in word:
             end_state = self.walk(letter)
             if end_state == None:
+                print("Non-deterministic Automata!")
                 break
         if end_state in self.accept:
             return True
