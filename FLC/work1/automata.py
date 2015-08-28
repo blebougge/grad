@@ -76,8 +76,6 @@ class Automata(object):
         """
         if not state in self.states:
             self.states.append(state)
-            for letter in self.alphabet:
-                self.addtransition({state : [letter, []]})
 
     def addstart(self, state):
         """
@@ -135,28 +133,42 @@ class Automata(object):
     def addtransition(self, transition):
         """
         Adds a transition. The transition must be in the form:
-        transition = { 'qX' : ['z', 'qY'] }
+        transition = { 'qX' : ['z', ['qY']] }
         """
         for state in transition:
             if not state in self.states:
-                self.states.addstate(state)
-            if len(self.transitions[state]) == 0:
+                self.addstate(state)
+            if not state in self.transitions:
+                self.transitions[state] = {}
+            for letter in self.alphabet:
+                if not letter in self.transitions[state]:
+                    self.transitions[state][letter] = []
+            if len(transition[state][1]) != 0:
+                print(transition[state][1][0], self.transitions[state][transition[state][0]])
+                if not transition[state][1][0] in self.transitions[state][transition[state][0]]:
+                    self.transitions[state][transition[state][0]].append(transition[state][1][0])
+            else:
                 self.transitions[state] = {
-                    transition[state][0] : [transition[state][1]]
-                }
-            elif not transition[state][1] in self.transitions[state][transition[state][0]]:
-                self.transitions[state][transition[state][0]].append(transition[state][1])
-
+                    transition[state][0] : transition[state][1]
+                    }
+            #print(state, self.transitions[state])
+                
     def rmtransition(self, transition):
         """
         Remove a transition. The transition must be in the form:
-        transition = ['qX', 'qY']
-        You cannot remove a state transition without removing the state.
-        Here you can only set the transition to None.
+        transition = { 'qX' : ['a', ['qY'] }
+        qY is going to be removed from the list of transitions from qX.
         """
-        for letter in self.transitions[transition[0]].keys():
-            if transition[1] in self.transitions[transition[0]][letter]:
-                self.transitions[transition[0]][letter].remove(transition[1])
+        for key in transition:
+            letter = transition[key][0]
+            if not key in self.states:
+                self.addstate(key)
+            if not key in self.transitions:
+                self.transitions[key] = {}
+            if not letter in self.transitions[key]:
+                self.transitions[key][letter] = []
+            if transition[key][1][0] in self.transitions[key][letter]:
+                self.transitions[key][letter].remove(transition[key][1][0])
 
     def walk(self, letter):
         """
@@ -214,6 +226,7 @@ class Automata(object):
             return None
         
         automata = copy.deepcopy(self)
+        automata_aux = copy.deepcopy(automata)
         check_states = {}
         over = False
         while(not over):
@@ -230,20 +243,50 @@ class Automata(object):
                             if each in automata.accept:
                                 is_accept = True
                             new_state += each
-                        automata.addstate(new_state)
-                        automata.addaccept(new_state)
-                        automata.transitions[state][letter] = [new_state]
+                        automata_aux.addstate(new_state)
+                        if is_accept:
+                            automata_aux.addaccept(new_state)
+                        # put the new_state name into the state transition
+                        automata_aux.addtransition({ state : [letter, [new_state]] })
+                        for each in list_states:
+                            automata_aux.addtransition({ new_state : [letter, [each]] })
                         # put the list of states that generate the new states into the check_states dictionary
-                        check_states[new_state] = list_states
+                        for each in list_states:
+                            if not new_state in check_states:
+                                check_states[new_state] = []
+                            if not each in check_states[new_state]:
+                                check_states[new_state].append(each)
             # now we need check the states to see the transitions
+            print("states aux:",automata_aux.transitions)
+            input()
+
+
+            for state in automata.transitions:
+                for letter in automata.transitions[state]:
+                    if len(automata.transitions[state][letter]) > 1:
+                        for each in automata.transitions[state][letter]:
+                            automata_aux.rmtransition({ state : [letter, [each]] })
+            for state in check_states:
+                for start_state in check_states[state]:
+                    for letter in automata.alphabet:
+                        for each in automata.transitions[start_state][letter]:
+                            automata_aux.addtransition({
+                                state : [letter, [each]] })
+            print("states aux after:",automata_aux.transitions)
+            input()
+            automata = copy.deepcopy(automata_aux)
+            """
             for state in check_states:
                 for sub_state in check_states[state]:
-                    for letter in automata.alphabet:
+                        for letter in automata.alphabet:
                         # finally after that for^3, add the state transition
-                        automata.addtransition({
-                            state : [letter, automata.transition[sub_state][letter]]})
-            # clean the check states
-            check_states = {}
+                            for each in automata.transitions[sub_state][letter]:
+                                automata.addtransition({
+                                    state : [letter, [each]]})
+                        print(automata.transitions[sub_state][letter])
+                        print(automata.transitions[state][letter])
+                        input()
+            """
             # then, check if the automata now is deterministic
             if automata.isdeterministic():
                 over = True

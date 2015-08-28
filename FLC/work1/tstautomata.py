@@ -10,25 +10,22 @@ import copy
 # Q - States
 states = ['q0','q1','q2','q3']
 # E - Alphabet
-alphabet = ['a','b','c']
+# alphabet = ['a','b','c']
+alphabet = ['a','b']
 # d - Transitions
 transitions = {
     'q0' : {
-        'a' : ['q0'],
-        'b' : ['q1'],
-        'c' : ['q3']},
+        'a' : ['q0','q1'],
+        'b' : ['q0']},
     'q1' : {
-        'a' : ['q1'],
-        'b' : ['q2'],
-        'c' : ['q3']},
+        'a' : ['q2'],
+        'b' : ['q3']},
     'q2' : {
         'a' : ['q2'],
-        'b' : ['q3'],
-        'c' : ['q3']},
+        'b' : ['q2']},
     'q3' : {
         'a' : ['q3'],
-        'b' : ['q3'],
-        'c' : ['q3']}
+        'b' : ['q3']}
     }
 # q0 - Start State
 start = states[0]
@@ -80,10 +77,10 @@ fsm = Automata(states, alphabet, transitions, start, accept)
 fsm1 = copy.deepcopy(fsm)
 print("Original states:")
 print_tst(states,alphabet,transitions,start,accept)
-# simple_tst(states, alphabet, transitions, start, accept)
+#simple_tst(states, alphabet, transitions, start, accept)
 
 print("Automata to next tests: ")
-# fsm1.addtransition({'q0' : ['b', 'q3']})
+#fsm1.addtransition({'q0' : ['b', 'q3']})
 print_fsm(fsm1)
 letter = 'b'
 walk_tst(fsm1, letter)
@@ -92,4 +89,5 @@ fsm1.actual_state = fsm1.states[0]
 detect_tst(fsm1, word)
 print("Now we know that automata is not deterministic, we need detereminize it!")
 fsm2 = fsm.determinize()
+print_fsm(fsm)
 print_fsm(fsm2)
