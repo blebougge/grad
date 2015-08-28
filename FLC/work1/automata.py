@@ -1,5 +1,7 @@
 # caian 26/08/2015
 
+import copy
+
 class Automata(object):
     """
     Automata definition: M is a 5-tuple (Q,E,d,q0,F) where
@@ -72,7 +74,10 @@ class Automata(object):
         """
         Adds a state to the automata states.
         """
-        self.states.append(state)
+        if not state in self.states:
+            self.states.append(state)
+            for letter in self.alphabet:
+                self.addtransition({state : [letter, []]})
 
     def addstart(self, state):
         """
@@ -89,7 +94,7 @@ class Automata(object):
         Adds a accept state.
         """
         if not accept in self.states:
-            self.states.append(accept)
+            self.addstate(accept)
         if not accept in self.accept:
             self.accept.append(accept)
 
@@ -123,9 +128,9 @@ class Automata(object):
         """
         if letter in self.alphabet:
             self.alphabet.remove(letter)
-        for state in self.transitions.keys():
-            while letter in self.transitions[state].keys():
-                del self.transitions[state][letter]
+            for state in self.transitions.keys():
+                while letter in self.transitions[state].keys():
+                    del self.transitions[state][letter]
 
     def addtransition(self, transition):
         """
@@ -180,6 +185,12 @@ class Automata(object):
             return True
         return False
 
+    def rewind(self):
+        """
+        After a previous detect, this function will rewind the automata.
+        """
+        self.actual_state = self.start
+
     def isdeterministic(self):
         """
         Returns True if automata is deterministic and False if not.
@@ -198,5 +209,42 @@ class Automata(object):
         When you have a non-deterministic Automata and you want to find a deterministic equivalent form, try use this.
         It will return the new automata, deterministic one or None if the automata already deterministic.
         """
+        self.rewind()
         if self.isdeterministic():
             return None
+        
+        automata = copy.deepcopy(self)
+        check_states = {}
+        over = False
+        while(not over):
+            # Verify the automata to get the new states
+            for state in automata.transitions:
+                for letter in automata.transitions[state]:
+                    new_state = ''
+                    is_accept = False
+                    if len(automata.transitions[state][letter]) > 1:
+                        # If find new state, then put into automata
+                        list_states = []
+                        for each in automata.transitions[state][letter]:
+                            list_states.append(each)
+                            if each in automata.accept:
+                                is_accept = True
+                            new_state += each
+                        automata.addstate(new_state)
+                        automata.addaccept(new_state)
+                        automata.transitions[state][letter] = [new_state]
+                        # put the list of states that generate the new states into the check_states dictionary
+                        check_states[new_state] = list_states
+            # now we need check the states to see the transitions
+            for state in check_states:
+                for sub_state in check_states[state]:
+                    for letter in automata.alphabet:
+                        # finally after that for^3, add the state transition
+                        automata.addtransition({
+                            state : [letter, automata.transition[sub_state][letter]]})
+            # clean the check states
+            check_states = {}
+            # then, check if the automata now is deterministic
+            if automata.isdeterministic():
+                over = True
+        return automata

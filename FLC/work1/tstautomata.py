@@ -90,3 +90,6 @@ walk_tst(fsm1, letter)
 word = 'aababcc'
 fsm1.actual_state = fsm1.states[0]
 detect_tst(fsm1, word)
+print("Now we know that automata is not deterministic, we need detereminize it!")
+fsm2 = fsm.determinize()
+print_fsm(fsm2)
