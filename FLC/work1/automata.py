@@ -216,10 +216,26 @@ class Automata(object):
                     return False
         return True
 
+    def _isdeterministic(self, transitions):
+        """
+        Returns True if automata is deterministic and False if not.
+        Remember: 'e' letter is the Empty transition.
+        
+        This function will be used in determinize function.
+        """
+        if 'e' in self.alphabet:
+            return False
+        for state in transitions:
+            for letter in transitions[state]:
+                if len(transitions[state][letter]) > 1:
+                    return False
+        return True
+
     def _addstate(self, transitions, transition):
         """
         Adds a transition to transitions sequence. The transition must be in the form:
         transition = { 'qX' : ['z', ['qY']] }
+        
         This function will be used in determinize function.
         """
         state = list(transition.keys())[0]
@@ -243,16 +259,17 @@ class Automata(object):
         Remove a transition. The transition must be in the form:
         transition = { 'qX' : ['a', ['qY'] }
         qY is going to be removed from the list of transitions from qX.
+        
         This function will be used in determinize function.
         """
         state = list(transition.keys())[0]
         letter = transition[state][0]
         rm = transition[state][1] # this is a list!
 
-        if not state in self.transitions:
-            self.transitions[key] = {}
-        if not letter in self.transitions[key]:
-            transitions[key][letter] = []
+        if not state in transitions:
+            transitions[state] = {}
+        if not letter in transitions[state]:
+            transitions[state][letter] = []
         if len(rm) != 0:
             if rm[0] in transitions[state][letter]:
                 transitions[state][letter].remove(rm[0])
@@ -266,42 +283,93 @@ class Automata(object):
         When you have a non-deterministic Automata and you want to find a deterministic equivalent form, try use this.
         It will return the new automata, deterministic one or self if the automata already deterministic.
         """
+        automata = copy.deepcopy(self)
         trs = copy.deepcopy(self.transitions)
         trsa = {}
+        """
+        The dictionary to check the new states. It will be on the form:
+            check_states = {
+                'q0q1' : ['q0','q1'],
+                ...
+                }
+        inside_aux will help on being the list.
+        """
+        check_states = {}
+        inside_aux = []
 
         print(trs)
-        # for each state in transition
-        for state in trs:
-            # for each letter in alphabet
-            for letter in self.alphabet:
-                # each reached state
-                reached = trs[state][letter]
-                new_state = ''
-                print("reached:",reached)
-                if len(trs[state][letter]) > 1:
-                    # for each reached state
-                    for each in reached:
-                        new_state += each
-                elif len(trs[state][letter]) == 1:
-                    new_state = reached[0]
-                print("new_state:",new_state)
-                if new_state != '':
-                    if state == new_state:
-                        # add the new state to reach on the state
-                        self._addstate(trsa, { state : [letter, [new_state]] })
-                        print("trsa1:",trsa)
-                    else:
-                        # add the new state to reach on the state
-                        self._addstate(trsa, { state : [letter, [new_state]] })
-                        print("trsa2:",trsa)
+        over = False
+        while not over:
+            # for each state in transition
+            for state in trs:
+                # for each letter in alphabet
+                for letter in self.alphabet:
+                    # each reached state
+                    reached = trs[state][letter]
+                    new_state = ''
+                    # print("reached:",reached)
+                    if len(trs[state][letter]) > 1:
                         # for each reached state
-                        self._addstate(trsa, { new_state : [letter, []] })
-                        print("trsa3:",trsa)
-                else:
-                    self._addstate(trsa, { state : [letter, reached] })
-                    print("trsa4:",trsa)
-                print(trsa)
-                input()
+                        for each in reached:
+                            new_state += each
+                            inside_aux.append(each)
+                    #elif len(trs[state][letter]) == 1:
+                    #    new_state = reached[0]
+                    # print("new_state:",new_state)
+                    if new_state != '':
+                        # add the new state to reach on the state
+                        self._addstate(trsa, { state : [letter, [new_state]] })
+                        if state != new_state:
+                            # for each reached state
+                            for each in reached:
+                                self._addstate(trsa, { new_state : [letter, [each]] })
+                                #print("new each reached:",new_state, each, reached)
+                                #input()
+                        for each in check_states:
+                            for st in inside_aux:
+                                check_states[each].append(st)
+                        check_states[new_state] = inside_aux
+                    else:
+                        self._addstate(trsa, { state : [letter, reached] })
+                        # print("trsa4:",trsa)
+                    print("cs:",check_states)
+                    inside_aux = []
+            print(trsa)
+            # now, we need check the generated states!
+            print("cs:",check_states)
+            for state in check_states:
+                # print("state")
+                for gen in check_states[state]:
+                    for letter in self.alphabet:
+                        # remove the states from the composition of the new_state
+                        self._rmstate(trsa, {state : [letter, [gen]] })
+                        # to ever state reached, insert here
+                        for reached in trsa[gen][letter]:
+                            # if not reached already on another state
+                            print("state gen reached check_states[state]",state, gen, reached, check_states[state])
+                            if not reached in check_states[state]:
+                                self._addstate(trsa, { state : [letter, [reached]] })
+            """
+                                inside_aux.append(reached)
+            for state in check_states:
+                for each in inside_aux:
+                    check_states[state].append(each)
+            """
+            # now, we clean the transitions with the flist
+            
+            print("end trsa:",trsa)
+            input()
+
+            trs = copy.deepcopy(trsa)
+            # then, check if the automata now is deterministic
+            if self._isdeterministic(trs):
+                over = True
+            # check_states = {}
+        #for each in check_states:
+            
+        
+
+
         return self
                             
 
