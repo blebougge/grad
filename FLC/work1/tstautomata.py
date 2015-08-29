@@ -30,7 +30,7 @@ transitions = {
 # q0 - Start State
 start = states[0]
 # F - Accept States
-accept = states[3]
+accept = states[2]
 
 def print_tst(states, alphabet, transitions, start, accept):
     print("\tstates:",states)
@@ -89,5 +89,7 @@ fsm1.actual_state = fsm1.states[0]
 detect_tst(fsm1, word)
 print("Now we know that automata is not deterministic, we need detereminize it!")
 fsm2 = fsm.determinize()
+print("Non-deterministic automata:")
 print_fsm(fsm)
+print("Deterministic one equivalent:")
 print_fsm(fsm2)
