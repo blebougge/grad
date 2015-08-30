@@ -15,3 +15,7 @@ def ask(message=None):
 def ask_num(message=None):
     return int(ask(message))
 
+def mes(message):
+    print(message)
+
+

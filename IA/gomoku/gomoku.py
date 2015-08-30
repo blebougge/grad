@@ -8,7 +8,8 @@ from io import *
 
 menu = {
     0 : 'exit',
-    1 : 'Play!(just humans)'
+    1 : 'Play!(just humans)',
+    2 : 'Human vs Computer(Not avaliable)'
 }
 # Size of matrix
 SIZE = 15 
@@ -23,7 +24,7 @@ directions = ['H','V','D']
 # Start menu.
 def start_menu():
 	for option in menu:
-		print("%d : %s" % (option, menu[option]))
+		mes("%d : %s" % (option, menu[option]))
 	return ask_num("Chose one!")
 
 # Type of players
@@ -42,21 +43,21 @@ def turn(player, m):
 	playable = False
 	row = 0
 	col = 0
-	print("Player %s, do your move(chose between 1 an %d, plz)" % (player, SIZE))
+	mes("Player %s, do your move(chose between 1 an %d, plz)" % (player, SIZE))
 	while not playable:
 		row = ask_num("Chose a row")
 		col = ask_num("Chose a column")
 		if m[row-1,col-1] == '+':
 			playable = True
 		else:
-			print("Sorry, chose another move!")
+			mes("Sorry, chose another move!")
 	r[row-1,col-1] = player
 	return r
 
 # Validate turn
 def validate_turn():
-    turn = ask("Is that your move?(\'s\' ou \'n\')")
-    if turn == 's':
+    turn = ask("Is that your move?(\'y\' or \'n\')")
+    if turn == 'y':
         return True
     return False 
 
@@ -69,7 +70,7 @@ def is_over(m):
 
 # Check if its over on one direction
 def check_over(m, direction):
-    print(direction)
+    # mes(direction)
     if direction == 'H':
         return iterate_over(m,'row')
     elif direction == 'V':
@@ -98,7 +99,7 @@ def iterate_over(m, where):
                 else:
                     sequence = 0
             else:
-			    sequence = 0
+                sequence = 0
             if sequence == SEQUENCE:
                 return True
             back_pos += 1
@@ -128,40 +129,43 @@ def iterate_diagonal(m):
 
 # Play function.
 def play():
-    print("This is a Gomoku-game. Type your deserved option: ")
+    mes("This is a Gomoku-game. Type your deserved option: ")
     option = start_menu()
     if option == 0:
-        print("%s" % "bye!!")
+        mes("bye!!")
+        return
+    if option == 2:
+        mes("Sorry, not avaliable :(")
         return
     m = Matrix(SIZE,SIZE,'+')
     rm = m[(0,0):]
-    print("Let's play!")
+    mes("Let's play!")
     playing = True
     valid = False
     i = 0
-    print(m)
+    mes(m)
     while playing:
         while not valid:
             rm = turn(players[0], m)
-            print(rm)
+            mes(rm)
             valid = validate_turn()
         m = rm
         if is_over(m):
             break
-        print(m)
+        mes(m)
         valid = False
         while not valid:
             rm = turn(players[1], m)
-            print(rm)
+            mes(rm)
             valid = validate_turn()
         m = rm
         if is_over(m):
             break
-        print(m)
+        mes(m)
         valid = False
         i = i + 1
         if i > 20:
             playing = False
-    print("bye!! :D")
+    mes("bye!! :D")
 
 play()
