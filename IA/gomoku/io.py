@@ -1,8 +1,8 @@
 # caian 20/08/2015
-
 """
 Input and console functions
 """
+
 console = "> "
 
 def ask(message=None):
@@ -17,5 +17,3 @@ def ask_num(message=None):
 
 def mes(message):
     print(message)
-
-
