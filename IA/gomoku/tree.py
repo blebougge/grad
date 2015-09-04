@@ -11,9 +11,6 @@ class Tree(object):
     That is the Tree I've implemented.
 
     The root node is the actual state of the board.
-    The data from nodes is a dictionary with:
-        key: board's heuristic value
-        value: the list of moves that you do to accomplish that state
     """
     
     def __init__(self, root=None):
