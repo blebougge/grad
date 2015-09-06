@@ -52,7 +52,7 @@ class Musashi(object):
                     self.addvaluesline(values, i, j, value, self.ORIENTATION[1])
                     # diagonals
                     self.addvaluesdline(values, i, j, value)
-                    values[i,j] += 6
+                    values[i,j] += value
                 value = abs(value)
         print(values)
         valuessum = 0
@@ -73,8 +73,7 @@ class Musashi(object):
         index = i
         jndex = j
         # normal diagonal
-        for spot in range(1, board.height):
-            print(board)
+        for spot in range(1, board.height*2):
             if spot % 2 == 0:
                 index = index + spot
                 jndex = jndex + spot
@@ -91,15 +90,16 @@ class Musashi(object):
                     board[index,jndex] += correctvalue
                 else:
                     board[index,jndex] -= correctvalue 
+        index = i
+        jndex = j
         # inverse diagonal
-        for spot in range(1, board.height):
-            print(board)
+        for spot in range(1, board.height*2):
             if spot % 2 == 0:
                 index = index - spot
                 jndex = jndex + spot
             else:
-                index = i + spot
-                jndex = j - spot
+                index = index + spot
+                jndex = jndex - spot
             if index in range(0, board.height) and jndex in range(0, board.width):
                 correctvalue = abs(value)
                 if abs(i - abs(index)) < 5:
@@ -124,7 +124,7 @@ class Musashi(object):
         else:
             index = j
 
-        for spot in range(1, board.height):
+        for spot in range(1, board.height*2):
             if spot % 2 == 0:
                 index = index + spot
             else:
