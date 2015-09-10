@@ -6,6 +6,7 @@ Artificial Inteligence for the Gomoku game.
 from matrix import Matrix
 from tree import Tree
 from node import Node
+import copy
 
 class Musashi(object):
     """
@@ -17,9 +18,11 @@ class Musashi(object):
     r = Node() # root
     t = Tree() # tree
     """
-    def __init__(self, board):
+    def __init__(self, board, player):
         self.board = board
         self.ORIENTATION = ['H','V']
+        # move sould be 'O' or 'X'
+        self.PLAYER = player
     
     def domove(self, board):
         """
@@ -28,15 +31,70 @@ class Musashi(object):
         whatever you want.
         """
         self.board = board
-        move = self.choose_move() # return a list
+        move = self.choosemove() # return a list
+        print("heuristic, row and col:",move[0], move[1], move[2])
         return move
 
     def choosemove(self):
-        pass
+        """
+        Choose the best move on the value obtained by the calcvalue() method.
+        The return of the function is a list containing the following:
+            [best heuristic value, best row, best col]
+        """
+        # this line is to better code
+        b = copy.deepcopy(self.board)
+        # central point
+        i = int(b.height / 2)
+        j = int(b.width / 2) 
+        # verity matrix
+        vmatrix = Matrix(b.height, b.width, False)
+        # heuristic value
+        hvalue = 0
+        bestvalue = -99999
+        besti = i
+        bestj = j
+        # played?
+        played = False
+        for count in range(0, i+1):
+            if count == 0:
+                if b[i,j] == '+':
+                    b[i,j] = self.PLAYER
+                    hvalue = self.calcvalue(b, self.PLAYER)
+                    played = True
+                vmatrix[i,j] = True
+            else:
+                vm = vmatrix[(i-count,j-count):(i+1+count,j+1+count)]
+                for row in range(0,vm.height):
+                    for col in range(0,vm.width):
+                        if vm[row,col] != True:
+                            if b[i-count+row,j-count+col] == '+':
+                                b[i-count+row,j-count+col] = self.PLAYER
+                                hvalue = self.calcvalue(b, self.PLAYER)
+                                played = True
+                            vmatrix[i-count+row,j-count+col] = True
+                            vm[row,col] = True
+                        if played:
+                            b[i-count+row,j-count+col] = '+'
+                            if hvalue >= bestvalue:
+                                bestvalue = hvalue
+                                besti = i-count+row
+                                bestj = j-count+col
+                            played = False
+                        # print(vmatrix)
+                        # raw_input()
+            if played:
+                b[i,j] = '+'
+                if hvalue >= bestvalue:
+                    bestvalue = hvalue
+                    besti = i
+                    bestj = j
+                played = False
+        
+        return [bestvalue, besti, bestj]
 
     def calcvalue(self, board, player):
         """
-        Calculate the heuristic value to a given board. Start on the center.
+        Calculate the heuristic value to a given board.
         """
         # matrix of values
         values = Matrix(board.height, board.height, 0)
@@ -54,7 +112,8 @@ class Musashi(object):
                     self.addvaluesdline(values, i, j, value)
                     values[i,j] += value
                 value = abs(value)
-        print(values)
+        # print(values)
+        # raw_input()
         valuessum = 0
         for each in values:
             valuessum += each
