@@ -144,11 +144,10 @@ class Musashi(object):
                 if value > 0:
                     if orientation == self.ORIENTATION[0]: # horizontal
                         board[index,j] += correctvalue
-                    else:
+                    else: # vertical
                         board[i,index] += correctvalue
                 else:
-                    if orientation == self.ORIENTATION[1]: # vertical
+                    if orientation == self.ORIENTATION[0]: # horizontal
                         board[index,j] -= correctvalue
-                    else:
+                    else: # vertical
                         board[i,index] -= correctvalue
-                    
