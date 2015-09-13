@@ -31,18 +31,18 @@ class Musashi(object):
         whatever you want.
         """
         self.board = board
-        move = self.choosemove() # return a list
+        move = self.choosemove(self.board) # return a list
         print("heuristic, row and col:",move[0], move[1], move[2])
-        return move
+        return [move[1], move[2]]
 
-    def choosemove(self):
+    def choosemove(self, board):
         """
         Choose the best move on the value obtained by the calcvalue() method.
         The return of the function is a list containing the following:
             [best heuristic value, best row, best col]
         """
         # this line is to better code
-        b = copy.deepcopy(self.board)
+        b = copy.deepcopy(board)
         # central point
         i = int(b.height / 2)
         j = int(b.width / 2) 

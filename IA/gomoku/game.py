@@ -9,7 +9,8 @@ from io import *
 menu = {
     0 : 'exit',
     1 : 'Play!(just humans)',
-    2 : 'Human vs Computer(Not avaliable)'
+    2 : 'Human vs Computer',
+    3 : 'Computer vs Human'
 }
 # Size of matrix
 SIZE = 15 
@@ -61,10 +62,10 @@ def play():
     if option == 0:
         mes("bye!!")
         return
-    elif option == 2:
+    elif option > 3:
         mes("Sorry, not avaliable :(")
         return
-    elif option != 1:
+    elif option < 0:
         mes("Not valid option!")
         return
     rm = gomoku_game.copy_matrix()
@@ -74,24 +75,53 @@ def play():
     i = 0
     mes(gomoku_game.show_matrix())
     while playing:
-        while not valid:
-            rm = turn(players[0], gomoku_game)
+        if option == 1: # human vs human
+            while not valid:
+                rm = turn(players[0], gomoku_game)
+                mes(rm)
+                valid = validate_turn()
+            if gomoku_game.is_over():
+                break
+            mes(gomoku_game.show_matrix())
+            valid = False
+            while not valid:
+                rm = turn(players[1], gomoku_game)
+                mes(rm)
+                valid = validate_turn()
+            if gomoku_game.is_over():
+                break
+            mes(gomoku_game.show_matrix())
+            valid = False
+        elif option == 2: # human vs computer
+            while not valid:
+                rm = turn(players[0], gomoku_game)
+                mes(rm)
+                valid = validate_turn()
+            if gomoku_game.is_over():
+                break
+            mes(gomoku_game.show_matrix())
+            valid = False
+            rm = gomoku_game.computer_turn()
+            mes("Computer turn:")
             mes(rm)
-            valid = validate_turn()
-        if gomoku_game.is_over():
-            break
-        mes(gomoku_game.show_matrix())
-        valid = False
-        while not valid:
-            rm = turn(players[1], gomoku_game)
+            if gomoku_game.is_over():
+                break
+        else: # computer vs human
+            rm = gomoku_game.computer_turn()
+            mes("Computer turn:")
             mes(rm)
-            valid = validate_turn()
-        if gomoku_game.is_over():
-            break
-        mes(gomoku_game.show_matrix())
-        valid = False
+            if gomoku_game.is_over():
+                break
+            while not valid:
+                rm = turn(players[0], gomoku_game)
+                mes(rm)
+                valid = validate_turn()
+            if gomoku_game.is_over():
+                break
+            mes(gomoku_game.show_matrix())
+            valid = False
         i = i + 1
-        if i > 20:
+        if i > 30:
             playing = False
     mes("bye!! :D")
 

@@ -4,6 +4,7 @@ Gomoku Model.
 """
 
 from matrix import Matrix
+from musashi import Musashi
 
 # Sequence to win a game
 SEQUENCE = 5
@@ -18,6 +19,7 @@ class Gomoku(object):
         self.size = size
         self.empty_spot = empty_spot
         self.m = Matrix(self.size, self.size, self.empty_spot)
+        self.musashi = Musashi(self.m, self.COMPUTER)
 
     # Check for a spot to be placed a move
     def check_spot(self, row, col):
@@ -38,7 +40,8 @@ class Gomoku(object):
         
     # TODO: Computer turn
     def computer_turn(self):
-        return True 
+        comp_move = self.musashi.domove(self.m)
+        return self.do_move(comp_move[0], comp_move[1], self.COMPUTER) 
         
     # Check for a final state of the game
     def is_over(self):
