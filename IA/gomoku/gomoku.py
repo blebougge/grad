@@ -92,7 +92,7 @@ class Gomoku(object):
     def iterate_diagonal(self):
         sequence = 0
         sym_list = []
-        for diagonal in range(-29,30):
+        for diagonal in range(-((self.size*2)-1),self.size*2):
             back_pos = 0
             sym_list = self.m.diagonal(diagonal)
             for symbol in sym_list:

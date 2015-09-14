@@ -30,17 +30,65 @@ class Musashi(object):
         On my implementation, the board is represented as a 2D Matrix from the import, but could be
         whatever you want.
         """
+        # the 'working' function is here, above. Just remove the comment lines
+        """
         self.board = board
         move = self.choosemove(self.board) # return a list
-        print("heuristic, row and col:",move[0], move[1], move[2])
+        # print("heuristic, row and col:",move[0], move[1], move[2])
         return [move[1], move[2]]
+        """
+        # here is where I'll be developing the best way to select.
+        self.board = board
+        listmove = self.choosemove(self.board) # return a list
+        # best move!!
+        bestmove = [ listmove[0], listmove[1], listmove[2] ]
+        enemyboard = copy.deepcopy(board)
+        # prevent next move list
+        nextlistmove = []
+        # now we find the best move for the enemy
+        # enemy list move
+        elistmove = []
+        for each in listmove[3]:
+            if board[each[0],each[1]] == '+':
+                enemyboard[each[0],each[1]] = self.PLAYER
+                elistmove = self.choosemove(enemyboard, 'O')
+                print('each:',each)
+                # find the next best move
+                for eachone in elistmove[3]:
+                    if enemyboard[eachone[0],eachone[1]] == '+':
+                        enemyboard[eachone[0],eachone[1]] = 'O'
+                        nextlistmove = self.choosemove(enemyboard)
+                        """
+                        Uncoment this line to see working!
+                        print(enemyboard)
+                        print(nextlistmove)
+                        """
+                        if nextlistmove[0] > bestmove[0]:
+                            bestmove[0] = nextlistmove[0] # the heuristic value get up.
+                            bestmove[1] = each[0] # better row
+                            bestmove[2] = each[1] # better col
+                            print('eachone:',eachone)
+                            print(bestmove)
+                        enemyboard[eachone[0],eachone[1]] = '+'
+                enemyboard[each[0],each[1]] = '+'
+                # print(enemyboard)
+                # print(board)
 
-    def choosemove(self, board):
+        return [ bestmove[1], bestmove[2] ] 
+
+    def choosemove(self, board, player=None):
         """
         Choose the best move on the value obtained by the calcvalue() method.
         The return of the function is a list containing the following:
-            [best heuristic value, best row, best col]
+            [best heuristic value, best row, best col, [board list] ]
+
+        The [board list] is the list of the possible moves. This will be used
+        in the following select of the best sequence of moves. (ps: still on develop)
         """
+        if player == None:
+            p = self.PLAYER
+        else:
+            p = player
         # this line is to better code
         b = copy.deepcopy(board)
         # central point
@@ -55,24 +103,37 @@ class Musashi(object):
         bestj = j
         # played?
         played = False
+        # moves list
+        moves = []
         for count in range(0, i+1):
             if count == 0:
                 if b[i,j] == '+':
-                    b[i,j] = self.PLAYER
-                    hvalue = self.calcvalue(b, self.PLAYER)
+                    b[i,j] = p
+                    hvalue = self.calcvalue(b, p)
                     played = True
+                    # moves append
+                    moves.append((i,j))
                 vmatrix[i,j] = True
+                if played:
+                    b[i,j] = '+'
+                    if hvalue >= bestvalue:
+                        bestvalue = hvalue
+                        besti = i
+                        bestj = j
+                    played = False
             else:
                 vm = vmatrix[(i-count,j-count):(i+1+count,j+1+count)]
                 for row in range(0,vm.height):
                     for col in range(0,vm.width):
                         if vm[row,col] != True:
                             if b[i-count+row,j-count+col] == '+':
-                                b[i-count+row,j-count+col] = self.PLAYER
-                                hvalue = self.calcvalue(b, self.PLAYER)
+                                b[i-count+row,j-count+col] = p
+                                hvalue = self.calcvalue(b, p)
                                 played = True
                             vmatrix[i-count+row,j-count+col] = True
                             vm[row,col] = True
+                            # moves append
+                            moves.append((i-count+row,j-count+col))
                         if played:
                             b[i-count+row,j-count+col] = '+'
                             if hvalue >= bestvalue:
@@ -82,15 +143,11 @@ class Musashi(object):
                             played = False
                         # print(vmatrix)
                         # raw_input()
-            if played:
-                b[i,j] = '+'
-                if hvalue >= bestvalue:
-                    bestvalue = hvalue
-                    besti = i
-                    bestj = j
-                played = False
-        
-        return [bestvalue, besti, bestj]
+        """
+        Uncoment this line to see working!
+        print(p, bestvalue, besti, bestj)
+        """
+        return [bestvalue, besti, bestj, moves]
 
     def calcvalue(self, board, player):
         """
