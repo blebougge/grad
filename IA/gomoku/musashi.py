@@ -4,8 +4,6 @@ Artificial Inteligence for the Gomoku game.
 """
 
 from matrix import Matrix
-from tree import Tree
-from node import Node
 import copy
 
 class Musashi(object):
@@ -14,10 +12,6 @@ class Musashi(object):
     The main intention to name this as Musashi is the 'double threat' concept to win the game. 2 swords, 'double threat'.
     """
     
-    """
-    r = Node() # root
-    t = Tree() # tree
-    """
     def __init__(self, board, player):
         self.board = board
         self.ORIENTATION = ['H','V']
