@@ -38,11 +38,17 @@ def turn(player, gomoku):
     row = 0
     col = 0
     mes("Player %s, do your move(chose between 1 an %d, plz)" % (player, SIZE))
+    m = gomoku.copy_matrix()
     while not playable:
         row = ask_num("Chose a row")
         col = ask_num("Chose a column")
         if gomoku.check_spot(row-1,col-1):
             playable = True
+            m[row-1,col-1] = player
+            mes(m)
+            if not validate_turn():
+                playable = False
+                m[row-1,col-1] = '+'
         else:
             mes("Sorry, chose another move!")
     return gomoku.do_move(row-1,col-1,player)
@@ -76,27 +82,18 @@ def play():
     mes(gomoku_game.show_matrix())
     while playing:
         if option == 1: # human vs human
-            while not valid:
-                rm = turn(players[0], gomoku_game)
-                mes(rm)
-                valid = validate_turn()
+            rm = turn(players[0], gomoku_game)
             if gomoku_game.is_over():
                 break
             mes(gomoku_game.show_matrix())
             valid = False
-            while not valid:
-                rm = turn(players[1], gomoku_game)
-                mes(rm)
-                valid = validate_turn()
+            rm = turn(players[1], gomoku_game)
             if gomoku_game.is_over():
                 break
             mes(gomoku_game.show_matrix())
             valid = False
         elif option == 2: # human vs computer
-            while not valid:
-                rm = turn(players[0], gomoku_game)
-                mes(rm)
-                valid = validate_turn()
+            rm = turn(players[0], gomoku_game)
             if gomoku_game.is_over():
                 break
             mes(gomoku_game.show_matrix())
@@ -112,10 +109,7 @@ def play():
             mes(rm)
             if gomoku_game.is_over():
                 break
-            while not valid:
-                rm = turn(players[0], gomoku_game)
-                mes(rm)
-                valid = validate_turn()
+            rm = turn(players[0], gomoku_game)
             if gomoku_game.is_over():
                 break
             mes(gomoku_game.show_matrix())
