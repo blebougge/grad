@@ -24,15 +24,15 @@ class Automata(object):
             'q0' : {
                 'a' : ['q1'],
                 'b' : ['q0','q1'],
-                'e' : [],           # e = Empty transition
+                'e' : ['M'],           # e = Empty transition
                 '1' : ['q1'],
-                '2' : []},          # [] = dead state
+                '2' : ['M']},          # ['M'] = dead state
             'q1' : {
                 'a' : ['q1'],
                 'b' : ['q0','q1'],
-                'e' : [],
+                'e' : ['M'],
                 '1' : ['q1'],
-                '2' : []}
+                '2' : ['M']}
         }
 
     So, thats the form I'll be doing this.
@@ -73,9 +73,15 @@ class Automata(object):
     def addstate(self, state):
         """
         Adds a state to the automata states.
+        Already add's the Dead states.
         """
         if not state in self.states:
             self.states.append(state)
+        for letter in self.alphabet:
+            if letter != 'e':
+                self.transitions = { letter : ['M'] }
+            else:
+                self.transitions = { letter : [state] }
 
     def addstart(self, state):
         """
@@ -107,6 +113,7 @@ class Automata(object):
         if state in self.accept:
             self.accept.remove(state)
         for s in self.states:
+            # the method rmtransition will seek for Dead states.
             self.rmtransition([s, state])
         del self.transitions[state]
 
@@ -118,7 +125,7 @@ class Automata(object):
             self.alphabet.append(letter)
         for state in self.transitions.keys():
             if not letter in self.transitions[state].keys():
-                self.transitions[state][letter] = []
+                self.transitions[state][letter] = ['M']
 
     def rmletter(self, letter):
         """
@@ -147,6 +154,8 @@ class Automata(object):
                 print(transition[state][1][0], self.transitions[state][transition[state][0]])
                 if not transition[state][1][0] in self.transitions[state][transition[state][0]]:
                     self.transitions[state][transition[state][0]].append(transition[state][1][0])
+                if 'M' in self.transitions[state][transition[state][0]]:
+                    self.transitions[state][transition[state][0]].remove('M')
             else:
                 self.transitions[state] = {
                     transition[state][0] : transition[state][1]
@@ -169,6 +178,8 @@ class Automata(object):
                 self.transitions[key][letter] = []
             if transition[key][1][0] in self.transitions[key][letter]:
                 self.transitions[key][letter].remove(transition[key][1][0])
+            if len(self.transitions[key][letter]) == 0:
+                self.transitions[key][letter].append('M')
 
     def walk(self, letter):
         """
@@ -191,7 +202,7 @@ class Automata(object):
             return False
         for letter in word:
             end_state = self.walk(letter)
-            if end_state == None:
+            if end_state == 'M':
                 break
         if end_state in self.accept:
             return True
@@ -221,7 +232,7 @@ class Automata(object):
         Returns True if automata is deterministic and False if not.
         Remember: 'e' letter is the Empty transition.
         
-        This function will be used in determinize function.
+        This function will be used JUST in determinize function.
         """
         if 'e' in self.alphabet:
             return False
@@ -249,6 +260,8 @@ class Automata(object):
         if len(add) > 0:
             if not add[0] in transitions[state][letter]:
                 transitions[state][letter].append(add[0])
+            if 'M' in transitions[state][letter]:
+                transitions[state][letter].remove('M')
         else:
             transitions[state] = {
                 letter : add
@@ -273,9 +286,11 @@ class Automata(object):
         if len(rm) != 0:
             if rm[0] in transitions[state][letter]:
                 transitions[state][letter].remove(rm[0])
+            if len(transitions[state][letter]) == 0:
+                transitions[state][letter].append('M')
         else:
             transitions[state] = {
-                letter : []
+                letter : ['M']
                 }
 
     def determinize(self):
