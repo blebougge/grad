@@ -306,9 +306,45 @@ class Automata(object):
             return self
 
         # now we have the magic
-        return self
+        # return automata
+        rauto = copy.deepcopy(self)
+        # transitions
+        trs = {}
         
+        # we need certificate that the state go to itself with an empty transition.
+        for state in rauto.transitions:
+            if not state in trs.keys():
+                trs[state] = {}
+            if not 'e' in trs[state].keys():
+                trs[state]['e'] = []
+            if not state in trs[state]['e']:
+                trs[state]['e'].append(state)
 
+        for state in rauto.transitions:
+            for letter in rauto.alphabet:
+                # if not  a empty transition
+                if letter != 'e':
+                    if not state in trs.keys():
+                        trs[state] = {}
+                    if not letter in trs[state].keys():
+                        trs[state][letter] = []
+                    # for each state in empty transitions
+                    for each in trs[state]['e']:
+                        if not each in trs[state][letter]:
+                            trs[state][letter].append(each)
+                    # for each state in original transitions
+                    for each in rauto.transitions[state][letter]:
+                        if not each in trs[state][letter]:
+                            trs[state][letter].append(each)
+            print("for", state, trs)
+        # put the transitions on the regular places
+        rauto.transitions = trs
+        # remove 'e' from alphabet
+        rauto.rmletter('e')
+        print("inside:",trs)
+        
+        return rauto
+        
     def determinize(self):
         """
         When you have a non-deterministic Automata and you want to find a deterministic equivalent form, try use this.
