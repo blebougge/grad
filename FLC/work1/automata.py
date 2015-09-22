@@ -293,13 +293,36 @@ class Automata(object):
                 letter : ['M']
                 }
 
+    def closure(self):
+        """
+        When the automata is non-deterministic, you have to seek for 'e' transitions. This method
+        calculates this and return a new equivalent automata.
+        """
+        # if it's already a deterministic one
+        if self.isdeterministic():
+            return self
+        # if you don't have empty transitions
+        if not 'e' in self.alphabet:
+            return self
+
+        # now we have the magic
+        return self
+        
+
     def determinize(self):
         """
         When you have a non-deterministic Automata and you want to find a deterministic equivalent form, try use this.
         It will return the new automata, deterministic one or self if the automata already deterministic.
         """
-        automata = copy.deepcopy(self)
-        trs = copy.deepcopy(self.transitions)
+        # if the automata already is deterministic
+        if self.isdeterministic():
+            return self
+
+        # we need to calculate the closure of the automata
+        nonE = self.closure()
+
+        automata = copy.deepcopy(nonE)
+        trs = copy.deepcopy(nonE.transitions)
         trsa = {}
         """
         The dictionary to check the new states. It will be on the form:
@@ -318,7 +341,7 @@ class Automata(object):
             # for each state in transition
             for state in trs:
                 # for each letter in alphabet
-                for letter in self.alphabet:
+                for letter in nonE.alphabet:
                     # each reached state
                     is_accept = False
                     reached = trs[state][letter]
@@ -326,17 +349,17 @@ class Automata(object):
                     if len(trs[state][letter]) > 1:
                         # for each reached state
                         for each in reached:
-                            if each in self.accept:
+                            if each in nonE.accept:
                                 is_accept = True
                             new_state += each
                             inside_aux.append(each)
                     if new_state != '':
                         # add the new state to reach on the state
-                        self._addstate(trsa, { state : [letter, [new_state]] })
+                        nonE._addstate(trsa, { state : [letter, [new_state]] })
                         if state != new_state:
                             # for each reached state
                             for each in reached:
-                                self._addstate(trsa, { new_state : [letter, [each]] })
+                                nonE._addstate(trsa, { new_state : [letter, [each]] })
                         for each in check_states:
                             for st in inside_aux:
                                 check_states[each].append(st)
@@ -344,23 +367,23 @@ class Automata(object):
                         if is_accept:
                             automata.accept.append(new_state)
                     else:
-                        self._addstate(trsa, { state : [letter, reached] })
+                        nonE._addstate(trsa, { state : [letter, reached] })
                     inside_aux = []
             # now, we need check the generated states!
             for state in check_states:
                 for gen in check_states[state]:
-                    for letter in self.alphabet:
+                    for letter in nonE.alphabet:
                         # remove the states from the composition of the new_state
-                        self._rmstate(trsa, {state : [letter, [gen]] })
+                        nonE._rmstate(trsa, {state : [letter, [gen]] })
                         # to ever state reached, insert here
                         for reached in trsa[gen][letter]:
                             # if not reached already on another state
                             if not reached in check_states[state]:
-                                self._addstate(trsa, { state : [letter, [reached]] })
+                                nonE._addstate(trsa, { state : [letter, [reached]] })
             
             trs = copy.deepcopy(trsa)
             # then, check if the automata now is deterministic
-            if self._isdeterministic(trs):
+            if nonE._isdeterministic(trs):
                 over = True
         for each in check_states:
             automata.states.append(each)
