@@ -286,11 +286,9 @@ class Automata(object):
         if len(rm) != 0:
             if rm[0] in transitions[state][letter]:
                 transitions[state][letter].remove(rm[0])
-            if len(transitions[state][letter]) == 0:
-                transitions[state][letter].append('M')
         else:
             transitions[state] = {
-                letter : ['M']
+                letter : []
                 }
 
     def closure(self):
@@ -336,14 +334,36 @@ class Automata(object):
                     for each in rauto.transitions[state][letter]:
                         if not each in trs[state][letter]:
                             trs[state][letter].append(each)
-            print("for", state, trs)
+            #print("for", state, trs)
         # put the transitions on the regular places
         rauto.transitions = trs
         # remove 'e' from alphabet
         rauto.rmletter('e')
-        print("inside:",trs)
+        #print("inside:",trs)
         
         return rauto
+
+    def findcomposition(self, original_states, state):
+        """
+        This method will be used to find composition of the given state.
+
+        original_states contains the original states of the automata.
+        state is the state to find a composition.
+
+        Returns a dictionary with the state name and a list of states that is the composition of the new state name.
+            { new_state : [composition of the state] }
+        """
+        composition = []
+        new_state = ''
+
+        for char in state:
+            for each in original_states:
+                # to return a state with a sequential name
+                if char == each:
+                    new_state += char
+                    composition.append(each)
+
+        return { new_state : composition }
         
     def determinize(self):
         """
@@ -371,13 +391,18 @@ class Automata(object):
         check_states = {}
         inside_aux = []
 
+        # to help on the sequential states add
+        seq = []
+        # states composition
+        composition = {}
+
         print(trs)
         over = False
         while not over:
             # for each state in transition
             for state in trs:
                 # for each letter in alphabet
-                for letter in nonE.alphabet:
+                for letter in automata.alphabet:
                     # each reached state
                     is_accept = False
                     reached = trs[state][letter]
@@ -385,41 +410,60 @@ class Automata(object):
                     if len(trs[state][letter]) > 1:
                         # for each reached state
                         for each in reached:
-                            if each in nonE.accept:
+                            print("reached",reached)
+                            if each in automata.accept:
                                 is_accept = True
-                            new_state += each
-                            inside_aux.append(each)
+                            seq.append(each)
+                        # sequential addition of states
+                        print("automata.states", automata.states)
+                        for each in automata.states:
+                            if each in seq:
+                                new_state += each
+                                inside_aux.append(each)
                     if new_state != '':
+                        # create a composition states dictionary
+                        composition[new_state] = automata.findcomposition(nonE.states, new_state)
+
+                        print("new_state",new_state, composition[new_state])
                         # add the new state to reach on the state
-                        nonE._addstate(trsa, { state : [letter, [new_state]] })
+                        comp_state = list(composition[new_state].keys())
+                        print("comp_state", comp_state)
+                        automata._addstate(trsa, { state : [letter, [ comp_state[0] ]] })
                         if state != new_state:
                             # for each reached state
                             for each in reached:
-                                nonE._addstate(trsa, { new_state : [letter, [each]] })
+                                automata._addstate(trsa, { new_state : [letter, [each]] })
                         for each in check_states:
                             for st in inside_aux:
-                                check_states[each].append(st)
+                                if not st in check_states[each]:
+                                    check_states[each].append(st)
                         check_states[new_state] = inside_aux
                         if is_accept:
                             automata.accept.append(new_state)
                     else:
-                        nonE._addstate(trsa, { state : [letter, reached] })
+                        automata._addstate(trsa, { state : [letter, reached] })
+
+                    seq = []
                     inside_aux = []
+            print("check_states", check_states)
             # now, we need check the generated states!
             for state in check_states:
-                for gen in check_states[state]:
-                    for letter in nonE.alphabet:
+                for gen in composition[state]:
+                    for letter in automata.alphabet:
                         # remove the states from the composition of the new_state
-                        nonE._rmstate(trsa, {state : [letter, [gen]] })
+                        automata._rmstate(trsa, {state : [letter, [gen]] })
                         # to ever state reached, insert here
                         for reached in trsa[gen][letter]:
                             # if not reached already on another state
                             if not reached in check_states[state]:
-                                nonE._addstate(trsa, { state : [letter, [reached]] })
+                                automata._addstate(trsa, { state : [letter, [reached]] })
+                                automata.addstate(state)
             
             trs = copy.deepcopy(trsa)
+            print(trs)
+            input()
             # then, check if the automata now is deterministic
-            if nonE._isdeterministic(trs):
+            if automata._isdeterministic(trs):
                 over = True
         for each in check_states:
             automata.states.append(each)

@@ -55,4 +55,4 @@ print_fsm(fsm)
 print("Is deterministic?",fsm.isdeterministic())
 print("Now we know that automata is not deterministic, we need detereminize it!")
 
-print_fsm(fsm.closure())
+print_fsm(fsm.determinize())
