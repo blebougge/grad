@@ -343,28 +343,6 @@ class Automata(object):
         
         return rauto
 
-    def findcomposition(self, original_states, state):
-        """
-        This method will be used to find composition of the given state.
-
-        original_states contains the original states of the automata.
-        state is the state to find a composition.
-
-        Returns a dictionary with the state name and a list of states that is the composition of the new state name.
-            { new_state : [composition of the state] }
-        """
-        composition = []
-        new_state = ''
-
-        for char in state:
-            for each in original_states:
-                # to return a state with a sequential name
-                if char == each:
-                    new_state += char
-                    composition.append(each)
-
-        return { new_state : composition }
-        
     def determinize(self):
         """
         When you have a non-deterministic Automata and you want to find a deterministic equivalent form, try use this.
@@ -374,103 +352,147 @@ class Automata(object):
         if self.isdeterministic():
             return self
 
-        # we need to calculate the closure of the automata
+        # we need to calculate the closure of the automata. nonE is the automata without 'e' transitions
         nonE = self.closure()
 
-        automata = copy.deepcopy(nonE)
+        # transitions of the automata. This line is used to better code
         trs = copy.deepcopy(nonE.transitions)
+        # transitions trs auxiliar
         trsa = {}
-        """
-        The dictionary to check the new states. It will be on the form:
-            check_states = {
-                'q0q1' : ['q0','q1'],
-                ...
-                }
-        inside_aux will help on being the list.
-        """
-        check_states = {}
-        inside_aux = []
 
-        # to help on the sequential states add
-        seq = []
-        # states composition
+        # the dictionary to find the composition of the states
         composition = {}
 
-        print(trs)
+        # to help on the new state, we need to create with some order
+        sequence = []
+
+        # new accept states:
+        new_accept = []
+
         over = False
         while not over:
+
             # for each state in transition
             for state in trs:
+
                 # for each letter in alphabet
-                for letter in automata.alphabet:
-                    # each reached state
+                for letter in nonE.alphabet:
+
                     is_accept = False
+
+                    # reached states
                     reached = trs[state][letter]
                     new_state = ''
+                    sequence = []
+
+                    # if we have more than one reached state
                     if len(trs[state][letter]) > 1:
-                        # for each reached state
+
+                        # for each reached state in the list
                         for each in reached:
-                            print("reached",reached)
-                            if each in automata.accept:
+                            if each in nonE.accept:
                                 is_accept = True
-                            seq.append(each)
+                            sequence.append(each)
+
+                        # auxiliar sequence list
+                        sequencea = []
+
+                        # check if the composition already have the states
+                        for st in sequence:
+                            if st in composition:
+                                for each in composition[st]:
+                                    if not each in sequence:
+                                        sequencea.append(each)
+                        if len(sequencea) != 0:
+                            for each in sequencea:
+                                if not each in sequence:
+                                    sequence.append(each)
+ 
                         # sequential addition of states
-                        print("automata.states", automata.states)
-                        for each in automata.states:
-                            if each in seq:
+                        for each in nonE.states:
+                            if each in sequence:
+
+                                # here we add in sequence
                                 new_state += each
-                                inside_aux.append(each)
-                    if new_state != '':
-                        # create a composition states dictionary
-                        composition[new_state] = automata.findcomposition(nonE.states, new_state)
+                            
+                        # print("new_state sequence", new_state, sequence)
+                        if not new_state in list(composition.keys()):
+                            composition[new_state] = sequence
 
-                        print("new_state",new_state, composition[new_state])
-                        # add the new state to reach on the state
-                        comp_state = list(composition[new_state].keys())
-                        print("comp_state", comp_state)
-                        automata._addstate(trsa, { state : [letter, [ comp_state[0] ]] })
-                        if state != new_state:
-                            # for each reached state
-                            for each in reached:
-                                automata._addstate(trsa, { new_state : [letter, [each]] })
-                        for each in check_states:
-                            for st in inside_aux:
-                                if not st in check_states[each]:
-                                    check_states[each].append(st)
-                        check_states[new_state] = inside_aux
+                        # add the new_state to the state
+                        nonE._addstate(trsa, { state : [letter, [new_state]] })
+
+                        # add the new_state to the trsa
+                        for each in composition[new_state]:
+
+                            # add the transitions to the new state
+                            for l in trs[each]:
+                                for st in trs[each][l]:
+                                    nonE._addstate(trsa, { new_state : [l, [st]] })
+
+                            # remove the compositions of the new state
+                            # for each letter in new state
+                            for l in trsa[new_state]:
+
+                                # for each state in letter transition
+                                for st in trsa[new_state][l]:
+
+                                    # if state is in the list of new_states
+                                    if st in list(composition.keys()):
+
+                                        # for each state that is diffrent from the original
+                                        for s in trsa[new_state][l]:
+                                            if s != st:
+
+                                                # if the state is in the list of composition of the original state, remove
+                                                if s in composition[st]:
+                                                    # print("new l st comp", new_state, l, s, composition[new_state])
+                                                    nonE._rmstate(trsa, { new_state : [l, [s]] })
+
+                                                # if the state s is a composite state of st
+                                                elif s in list(composition.keys()):
+                                                    if set(composition[s]).issubset(set(composition[st])):
+                                                        # print("set", set(composition[s]).issubset(set(composition[st])), composition[s])
+                                                        # print("comp", composition[s])
+                                                        nonE._rmstate(trsa, { new_state : [l, [s]] })
+
+
+                        # add the new_state to the old trs state
+                        nonE._addstate(trsa, { state : [letter, [new_state]] })
+
+                        # if is accept state add to the accept states
                         if is_accept:
-                            automata.accept.append(new_state)
-                    else:
-                        automata._addstate(trsa, { state : [letter, reached] })
+                            new_accept.append(new_state)
 
-                    seq = []
-                    inside_aux = []
-            print("check_states", check_states)
-            # now, we need check the generated states!
-            for state in check_states:
-                for gen in composition[state]:
-                    for letter in automata.alphabet:
-                        # remove the states from the composition of the new_state
-                        automata._rmstate(trsa, {state : [letter, [gen]] })
-                        # to ever state reached, insert here
-                        for reached in trsa[gen][letter]:
-                            # if not reached already on another state
-                            if not reached in check_states[state]:
-                                automata._addstate(trsa, { state : [letter, [reached]] })
-                                automata.addstate(state)
-            
+                    # else, we just add the simple state
+                    else:
+                        # print('trs', state, letter, trs[state][letter])
+                        nonE._addstate(trsa, { state : [letter, trs[state][letter]] } )
+
+            # now we need to put the trsa in trs
             trs = copy.deepcopy(trsa)
-            print(trs)
-            input()
+            trsa = {}
+            # print("transitions", trs)
+            # input()
+
             # then, check if the automata now is deterministic
-            if automata._isdeterministic(trs):
+            if nonE._isdeterministic(trs):
                 over = True
-        for each in check_states:
-            automata.states.append(each)
+            
+        # adds to the new_states
+        for each in list(composition.keys()):
+            if not each in nonE.states:
+                nonE.states.append(each)
+
+        # adds the accept states
+        for each in new_accept:
+            if not each in nonE.accept:
+                nonE.accept.append(each)
+
         """
         On automata object we have: All States, Accept-States, Start-State and Alphabet.
         Just put the Transitions there and kapow!
         """
-        automata.transitions = copy.deepcopy(trs)
+        nonE.transitions = copy.deepcopy(trs)
 
-        return automata
+        return nonE

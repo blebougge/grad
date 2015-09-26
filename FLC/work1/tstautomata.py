@@ -88,8 +88,9 @@ word = 'aababcc'
 fsm1.actual_state = fsm1.states[0]
 detect_tst(fsm1, word)
 print("Now we know that automata is not deterministic, we need detereminize it!")
+fsm_original = copy.deepcopy(fsm)
 fsm2 = fsm.determinize()
 print("Non-deterministic automata:")
-print_fsm(fsm)
+print_fsm(fsm_original)
 print("Deterministic one equivalent:")
 print_fsm(fsm2)

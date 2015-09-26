@@ -48,11 +48,12 @@ def print_fsm(fsm):
 Tests:
 """
 fsm = Automata(states, alphabet, transitions, start, accept)
+
 print("Original states:")
-print_tst(states,alphabet,transitions,start,accept)
 print_fsm(fsm)
 
 print("Is deterministic?",fsm.isdeterministic())
 print("Now we know that automata is not deterministic, we need detereminize it!")
 
+print("Here is the determinized automata:")
 print_fsm(fsm.determinize())
