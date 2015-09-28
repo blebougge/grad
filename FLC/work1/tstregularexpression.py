@@ -1,7 +1,7 @@
-# caian 26/09/2015
+# caian 22/09/2015
 
 """
-These are the regula expression tests of automata class.
+These are the tests of automata class.
 """
 
 from automata import Automata
@@ -52,9 +52,14 @@ fsm = Automata(states, alphabet, transitions, start, accept)
 print("Original states:")
 print_fsm(fsm)
 
-print("Is deterministic?", fsm.isdeterministic())
+print("Is deterministic?",fsm.isdeterministic())
 print("Now we know that automata is not deterministic, we need detereminize it!")
 
 fsmD = fsm.determinize()
+
 print("Here is the determinized automata:")
 print_fsm(fsmD)
+
+print("If we want a Regular Expression of the automata, here it is:")
+regular_expression = fsmD.toRegEx()
+print("RegEx:", regular_expression)

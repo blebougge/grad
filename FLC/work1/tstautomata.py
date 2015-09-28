@@ -94,3 +94,8 @@ print("Non-deterministic automata:")
 print_fsm(fsm_original)
 print("Deterministic one equivalent:")
 print_fsm(fsm2)
+
+# test for RegEx
+print("If we want a Regular Expression of the automata, here it is:")
+regular_expression = fsm2.toRegEx()
+print("RegEx:", regular_expression)

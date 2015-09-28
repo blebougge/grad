@@ -452,10 +452,9 @@ class Automata(object):
                                                 # if the state s is a composite state of st
                                                 elif s in list(composition.keys()):
                                                     if set(composition[s]).issubset(set(composition[st])):
-                                                        # print("set", set(composition[s]).issubset(set(composition[st])), composition[s])
+                                                        # print("set",set(composition[s]).issubset(set(composition[st])), composition[s])
                                                         # print("comp", composition[s])
                                                         nonE._rmstate(trsa, { new_state : [l, [s]] })
-
 
                         # add the new_state to the old trs state
                         nonE._addstate(trsa, { state : [letter, [new_state]] })
@@ -496,3 +495,185 @@ class Automata(object):
         nonE.transitions = copy.deepcopy(trs)
 
         return nonE
+
+    def _buildexpression(self, r1=None, r2=None, r3=None, r4=None):
+        """
+        This method is a internal use for the toRegEx method. This one build a expression from r1, r2, r3 and r4
+        given. The return will be in the form:
+            
+            expression = (R1(R2)*R3)UR4
+
+        """
+        expression = ''
+        flag1 = len(r1) > 0
+        flag2 = len(r2) > 0
+        flag3 = len(r3) > 0
+        flag4 = len(r4) > 0
+        if flag1 or flag3:
+            expression += '('
+            if flag1:
+                expression += r1
+            if flag2:
+                expression += '(' + r2 + ')*'
+            if flag3:
+                expression += r3
+            expression += ')'
+        elif flag2:
+            expression += '(' + r2 + ')*'
+        if flag4:
+            if len(expression) > 0:
+                if len(r4) > 1:
+                    expression += 'U(' + r4 + ')'
+                else:
+                    expression += 'U' + r4
+
+        return expression
+
+    def toRegEx(self):
+        """
+        This method returns the RegEx of the given automata. If the automata is not deterministic, return a simple error.
+        """
+
+        if not self.isdeterministic():
+            return None
+
+        automata = copy.deepcopy(self)
+
+        # first we need to add the new start and finish states
+        start_state = 'S'
+        finish_state = 'F'
+
+        automata.start = start_state
+        automata.accept = [finish_state]
+        automata.states.append(start_state)
+        automata.states.append(finish_state)
+
+        # now we put the 'e' transition from start_state to old start state and from every accept state to finish_state
+        automata.transitions[start_state] = { 'e' : [ self.start ]}
+        automata.transitions[finish_state] = { 'e' : []}
+        for each in self.accept:
+            automata.transitions[each]['e'] = []
+            automata.transitions[each]['e'].append(finish_state)
+
+        automata.alphabet.append('e')
+
+        # the RegEx automata convertion
+        regex = copy.deepcopy(automata)
+
+        # we need to start remove the others states
+        k = len(automata.states)
+        while k > 2:
+
+            # start choosing a state that is not the start or finish states
+            rem_i = 0
+            rem = automata.states[rem_i]
+            while rem == start_state and rem == start_state:
+                rem_i += 1
+                if rem_i > len(regex.states):
+                    print("Error on regex states")
+                rem = regex.states[rem_i]
+
+            # with the state to remove selected, we need remove it
+
+            r1 = ''
+            r2 = ''
+            r3 = ''
+            r4 = ''
+
+            # R2 = d(q_rem, q_rem)
+            for l in regex.alphabet:
+                if l in list(regex.transitions[rem].keys()):
+                    if rem in regex.transitions[rem][l]:
+                        if l != 'e':
+                            if len(r2) > 0:
+                                r2 += 'U'
+                            if len(l) > 1:
+                                r2 += '(' + l + ')'
+                            else:
+                                r2 += l
+
+            for state in list(regex.transitions.keys()):
+
+                # q_i = state
+                if state != rem:
+
+                    for l in regex.alphabet:
+                        if l in list(regex.transitions[state].keys()):
+
+                            if rem in regex.transitions[state][l]:
+
+                                # R1 = d(q_i, q_rem)
+                                if l != 'e':
+                                    if len(r1) > 0:
+                                        r1 += 'U'
+                                    if len(l) > 1:
+                                        r1 += '(' + l + ')'
+                                    else:
+                                        r1 += l
+
+                                # q_j = other
+                                for other in list(regex.transitions.keys()):
+
+                                    # if other state is diffrent from q_i and from q_rem
+                                    if other != state and other != rem:
+
+                                        # R3 = d(q_rem, q_j)
+                                        if l in list(regex.transitions[rem].keys()):
+                                            if other in regex.transitions[rem][l]:
+                                                if l != 'e':
+                                                    if len(r3) > 0:
+                                                        r3 += 'U'
+                                                    if len(l) > 1:
+                                                        r3 += '(' + l + ')'
+                                                    else:
+                                                        r3 += l
+
+                                        # R4 = d(q_i, q_j)
+                                        for letter in regex.alphabet:
+                                            if letter in list(regex.transitions[state].keys()):
+
+                                                # if other is in the transitions of the state
+                                                if other in regex.transitions[state][letter]:
+                                                    if letter != 'e':
+                                                        if len(r4) > 0:
+                                                            r4 += 'U'
+                                                        if len(letter) > 1:
+                                                            r4 += '(' + letter + ')'
+                                                        else:
+                                                            r4 += letter
+    
+                                                    # remove the old transition to q_j by letter 'letter'
+                                                    if letter in automata.transitions[state].keys():
+                                                        del automata.transitions[state][letter]
+
+                                        # HERE WE PUT THE NEW TRANSITION IN THE AUTOMATA
+                                        # build the expression
+                                        new_expression = automata._buildexpression(r1, r2, r3, r4)
+
+                                        # add the new expression to the state transition
+                                        automata.transitions[state] = { new_expression : [other] }
+
+                                        # the new_expression to alphabet
+                                        if not new_expression in automata.alphabet:
+                                            automata.alphabet.append(new_expression)
+                                        print('\t\tnew_expression', new_expression)
+
+
+            # and now we remove 'rem' from automata and copy to regex
+            del automata.transitions[rem]
+            automata.states.remove(rem)
+            regex = copy.deepcopy(automata)
+
+            print("\tregex.transitions", regex.transitions)
+            print("\tregex.alphabet", regex.alphabet)
+            input()
+
+            # check the k states remaining
+            k = len(automata.states)
+        
+
+        print("\tautomata.transitions", automata.transitions)
+        print("\tautomata.states", automata.states)
+
+        return list(regex.transitions[start_state].keys())[0]
+
