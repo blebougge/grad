@@ -511,21 +511,76 @@ class Automata(object):
         flag4 = len(r4) > 0
         if flag1 or flag3:
             expression += '('
+
+            # create R1
             if flag1:
-                expression += r1
+                if len(r1) == 1:
+                    expression += r1[0]
+                else:
+                    expression += '('
+                    for each in r1:
+                        if r1.index(each) == (len(r1) - 1):
+                            expression += each
+                        else:
+                            expression += each + 'U'
+                    expression += ')'
+
+            # create R2
             if flag2:
-                expression += '(' + r2 + ')*'
+                expression += '('
+                if len(r2) == 1:
+                    expression += r2[0]
+                else:
+                    for each in r2:
+                        if r2.index(each) == (len(r2) - 1):
+                            expression += each
+                        else:
+                            expression += each + 'U'
+                expression += ')*'
+
+            # create R3
             if flag3:
-                expression += r3
+                if len(r3) == 1:
+                    expression += r3[0]
+                else:
+                    expression += '('
+                    for each in r3:
+                        if r3.index(each) == (len(r3) - 1):
+                            expression += each
+                        else:
+                            expression += each + 'U'
+                expression += ')'
+
+            # end expression here
             expression += ')'
-        elif flag2:
-            expression += '(' + r2 + ')*'
+
+        else:
+            if flag2:
+                expression += '('
+                if len(r2) == 1:
+                    expression += r2[0]
+                else:
+                    for each in r2:
+                        if r2.index(each) == (len(r2) - 1):
+                            expression += each
+                        else:
+                            expression += each + 'U'
+                expression += ')*'
+
+        # create R4
         if flag4:
             if len(expression) > 0:
-                if len(r4) > 1:
-                    expression += 'U(' + r4 + ')'
+                expression += 'U'
+                if len(r4) == 1:
+                    expression += r4[0] 
                 else:
-                    expression += 'U' + r4
+                    expression += '('
+                    for each in r4:
+                        if r4.intex(each) == (len(r4) - 1):
+                            expression += each
+                        else:
+                            expression += each + 'U'
+                    expression += ')'
 
         return expression
 
@@ -575,22 +630,18 @@ class Automata(object):
 
             # with the state to remove selected, we need remove it
 
-            r1 = ''
-            r2 = ''
-            r3 = ''
-            r4 = ''
+            r1 = []
+            r2 = []
+            r3 = []
+            r4 = []
 
             # R2 = d(q_rem, q_rem)
             for l in regex.alphabet:
                 if l in list(regex.transitions[rem].keys()):
                     if rem in regex.transitions[rem][l]:
                         if l != 'e':
-                            if len(r2) > 0:
-                                r2 += 'U'
-                            if len(l) > 1:
-                                r2 += '(' + l + ')'
-                            else:
-                                r2 += l
+                            if not l in r2:
+                                r2.append(l)
 
             for state in list(regex.transitions.keys()):
 
@@ -604,12 +655,8 @@ class Automata(object):
 
                                 # R1 = d(q_i, q_rem)
                                 if l != 'e':
-                                    if len(r1) > 0:
-                                        r1 += 'U'
-                                    if len(l) > 1:
-                                        r1 += '(' + l + ')'
-                                    else:
-                                        r1 += l
+                                    if not l in r1:
+                                        r1.append(l)
 
                                 # q_j = other
                                 for other in list(regex.transitions.keys()):
@@ -621,12 +668,8 @@ class Automata(object):
                                         if l in list(regex.transitions[rem].keys()):
                                             if other in regex.transitions[rem][l]:
                                                 if l != 'e':
-                                                    if len(r3) > 0:
-                                                        r3 += 'U'
-                                                    if len(l) > 1:
-                                                        r3 += '(' + l + ')'
-                                                    else:
-                                                        r3 += l
+                                                    if not l in r3:
+                                                        r3.append(l)
 
                                         # R4 = d(q_i, q_j)
                                         for letter in regex.alphabet:
@@ -635,12 +678,8 @@ class Automata(object):
                                                 # if other is in the transitions of the state
                                                 if other in regex.transitions[state][letter]:
                                                     if letter != 'e':
-                                                        if len(r4) > 0:
-                                                            r4 += 'U'
-                                                        if len(letter) > 1:
-                                                            r4 += '(' + letter + ')'
-                                                        else:
-                                                            r4 += letter
+                                                        if not l in r4:
+                                                            r4.append(l)
     
                                                     # remove the old transition to q_j by letter 'letter'
                                                     if letter in automata.transitions[state].keys():
@@ -656,7 +695,7 @@ class Automata(object):
                                         # the new_expression to alphabet
                                         if not new_expression in automata.alphabet:
                                             automata.alphabet.append(new_expression)
-                                        print('\t\tnew_expression', new_expression)
+                                        # print('\t\tnew_expression', new_expression)
 
 
             # and now we remove 'rem' from automata and copy to regex
@@ -664,16 +703,16 @@ class Automata(object):
             automata.states.remove(rem)
             regex = copy.deepcopy(automata)
 
-            print("\tregex.transitions", regex.transitions)
-            print("\tregex.alphabet", regex.alphabet)
-            input()
+            # print("\tregex.transitions", regex.transitions)
+            # print("\tregex.alphabet", regex.alphabet)
+            # input()
 
             # check the k states remaining
             k = len(automata.states)
         
 
-        print("\tautomata.transitions", automata.transitions)
-        print("\tautomata.states", automata.states)
+        # print("\tautomata.transitions", automata.transitions)
+        # print("\tautomata.states", automata.states)
 
         return list(regex.transitions[start_state].keys())[0]
 
