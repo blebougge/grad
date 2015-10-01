@@ -762,3 +762,64 @@ class Automata(object):
                     # input()
 
         return grammar
+
+    def fromRegGraToAutomata(self, grammar, start):
+        """
+        This method convert an Regular Grammar to Automata and return the new Automata.
+        To the form of a Regular Grammar is described on toRegGra method. See there to understand.
+
+        This method return the new Automata. 'start' needs to be a single string.
+        """
+
+        states = []
+        start_state = start
+        accept = ['F']
+        states.append(accept[0])
+        # transitions
+        trs = {}
+        # alphabet
+        alphabet = []
+
+        # for each letter that represents a state
+        for each in list(grammar.keys()):
+
+            # adds to the states
+            states.append(each)
+
+            # check if its not already in transitions
+            if not each in list(trs.keys()):
+                trs[each] = {}
+
+            new = []
+            letter = ''
+            reached = ''
+            # now check the letters
+            for st in grammar[each]:
+                new = list(st)
+                letter = st[0]
+
+                # if the letter not in alphabet already
+                if not letter in alphabet:
+                    alphabet.append(letter)
+
+                reached = ''
+
+                # if letter not in the transitions state list
+                if not letter in list(trs[each].keys()):
+                    trs[each][letter] = []
+
+                # if we have a simple state transition or a final state transition
+                if len(new) > 1:
+                    for l in new[1:]:
+                        reached += l
+
+                    # finally add the transition
+                    trs[each][letter].append(reached)
+                else:
+                    trs[each][letter].append(accept[0])
+                # print("trs", trs)
+                # input()
+
+        # and finally, we create the new Automata
+        ret = Automata(states, alphabet, trs, start_state, accept[0]) 
+        return ret
