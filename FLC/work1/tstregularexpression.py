@@ -63,3 +63,8 @@ print_fsm(fsmD)
 print("If we want a Regular Expression of the automata, here it is:")
 regular_expression = fsmD.toRegEx()
 print("RegEx:", regular_expression)
+
+# test to RegGra
+print("Regular Grammar test:")
+regular_grammar = fsmD.toRegGra()
+print("toRegGra:", regular_grammar)

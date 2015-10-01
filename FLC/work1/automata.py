@@ -709,10 +709,56 @@ class Automata(object):
 
             # check the k states remaining
             k = len(automata.states)
-        
 
         # print("\tautomata.transitions", automata.transitions)
         # print("\tautomata.states", automata.states)
 
         return list(regex.transitions[start_state].keys())[0]
 
+    def toRegGra(self):
+        """
+        This method convert an Automata to a Regular Grammar and return the new Regular Grammar.
+
+        The Regular Grammar have this kind of form:
+
+            S -> aA | bB | a | b
+            A -> aA | bA | a
+            B -> aB | bB | b
+
+        So, the form I'll be returning the new Regular Grammar is like this:
+
+            RegGra = { S : [ 'aA', 'bB', 'a', 'b' ],
+                    A : [ 'aA', 'bA', 'a' ],
+                    B : [ 'aB', 'bB', 'b' ]
+                }
+
+        Easy, uh? If yout want to know what is the start state, ask to the automata! :)
+
+        """
+
+        # the return grammar
+        grammar = {}
+
+        # for each state in the automata
+        for each in self.states:
+            grammar[each] = []
+
+            # for each letter in the transitions
+            for letter in self.transitions[each]:
+
+                # for each state reached
+                for st in self.transitions[each][letter]:
+
+                    new = ''
+                    # if the state have a transition to itself
+                    if each == st:
+                        new += letter
+                    else:
+                        new += letter + st
+                    grammar[each].append(new)
+
+                    # happening status: IT'S.
+                    # print("grammar", grammar)
+                    # input()
+
+        return grammar
