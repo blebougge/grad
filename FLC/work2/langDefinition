@@ -1,0 +1,64 @@
+# caian 04/11/2015
+
+Language Definition
+
+Reserved Words:
+
+    prog    program definition to this language
+
+    begin   begin bracket
+    end     end bracket
+
+    fix     constant declaration
+
+    ary     array declaration
+
+    :       definition
+
+Variables Types:
+    Usage
+        <type>:x
+        <type>:y=<value>
+    
+    int     integer
+    dob     double
+    bl      boolean
+    str     string
+
+Loops:
+    Usage
+        while(<expression>)
+        begin
+        end
+
+    while   while loop
+
+Conditional:
+    Usage
+        if(<expression>)
+        begin
+        end
+
+    if      conditional
+
+R/W:
+    Usage
+        str:f=read(<file_name>)
+        write(<file_name>,f)
+
+    read    read file
+    write   write file
+
+Algebric:
+    +       sum
+    -       less
+    *       multiply
+    /       division
+    =       equal
+
+Logical:
+    >       greater
+    !=      diffrent
+    not     not
+    and     and
+    or      or
