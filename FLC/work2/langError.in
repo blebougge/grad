@@ -1,0 +1,22 @@
+# caian 05/11/2015
+
+pro lang.in
+
+fix int:id = 1
+fi st:f.out = "file_name
+
+begin
+
+int:x = 2
+x  x + id
+if(x  2)
+begin
+wrie(file_name, x)
+end
+str:file
+ifx eq 2)
+bein
+file = read(file_ame
+en
+
+end

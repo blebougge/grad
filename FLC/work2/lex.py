@@ -1,12 +1,5 @@
 # caian 05/11/2015
 
-def die(error_type):
-    """
-    Error treatment.
-    """
-    print(error_type)
-    
-
 def readItems(path=None):
     """
     Return a dictionary based on path file.
@@ -55,12 +48,14 @@ def tokenizer(path=None, items=None):
     line = f.readline()
     l = 0
     lexars = {}
+    # print('lines readed: ')
     while line != '':
         lexar = ''
         i = 0
         token = ''
-        print("line", line)
+        # print("",line)
         while line[i] != '\n':
+            token = ''
             if line[i] in list(items.keys()):
                 if line[i] == '#': # comment
                     i = len(line)-2
@@ -73,27 +68,27 @@ def tokenizer(path=None, items=None):
                     lexar = '<' + token + ', ' + items[line[i]] + '>'
                     lexars[l] = lexar
                     l += 1
-                print("lexar 1", lexar)
+                # print("lexar 1", lexar)
             else:
-                token = ''
                 while token not in list(items.keys()):
                     # print("char", line[i])
                     if line[i] in list(items.keys()):
                         if len(token) > 0:
                             lexar = '<' + token + ', ' + '???' + '>'
                             lexars[l] = lexar
-                            print("lexar 2", lexar)
+                            # print("lexar 2", lexar)
                             l += 1
                         lexar = '<' + line[i] + ', ' + items[line[i]] + '>'
-                        print("lexar 3", lexar)
+                        # print("lexar 3", lexar)
                         lexars[l] = lexar
                         l += 1
+                        i += 1
                         break
                     elif line[i] == '\n' or line[i] == ' ':
                         if token != '':
                             lexar = '<' + token + ', ' + '???' + '>'
                             lexars[l] = lexar
-                            print("lexar 4", lexar)
+                            # print("lexar 4", lexar)
                             l += 1
                         break
                     else:
@@ -103,23 +98,27 @@ def tokenizer(path=None, items=None):
 
                 if token in list(items.keys()):
                     lexar = '<' + token + ', ' + items[token] + '>'
-                    print("lexar 6", lexar)
+                    # print("lexar 5", lexar)
                     lexars[l] = lexar
                     l += 1
 
                 if line[i] in list(items.keys()) and line[i] != token:
                     lexar = '<' + line[i] + ', ' + items[line[i]] + '>'
-                    print("lexar 5", lexar)
+                    # print("lexar 6", lexar)
                     lexars[l] = lexar
                     l += 1
 
                 if line[i] == '\n':
                     break
-                
-            raw_input()
-            token = ''
+
+            # uncomment the line to se on the fly
+            # raw_input()
             i += 1
-        
+
+        if len(token) > 0:
+            lexars[l] = '<' + ';' + ', ' + items[';'] + '>'
+            l += 1
+
         line = f.readline()
     f.close()
     """
@@ -145,8 +144,26 @@ tf.write(str(items) + '\n')
 tf.write('\n')
 
 # tests - tokenizer
+lexars = tokenizer("lang.items", items)
+tf.write("# tokenizer - lang.items lexars\n")
+tf.write(str(lexars) + '\n')
+
+fitemsout = open("lang.items.out", 'w')
+for i in list(lexars.keys()):
+    fitemsout.write(str(lexars[i]) + '\n')
+fitemsout.close
+
+lexars = tokenizer("langError.in", items)
+tf.write("# tokenizer - langError.in lexars\n")
+tf.write(str(lexars) + '\n')
+
+ferrorout = open("langError.out", 'w')
+for i in list(lexars.keys()):
+    ferrorout.write(str(lexars[i]) + '\n')
+ferrorout.close
+
 lexars = tokenizer("lang.in", items)
-tf.write("# tokenizer - lexars\n")
+tf.write("# tokenizer - lang.in lexars\n")
 tf.write(str(lexars) + '\n')
 
 fout = open("lang.out", 'w')

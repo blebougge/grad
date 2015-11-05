@@ -27,3 +27,4 @@ eq EQUAL_LG
 not NOT_LG
 and AND_LG
 or OR_LG
+; IDENT
