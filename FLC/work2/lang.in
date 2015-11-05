@@ -1,0 +1,22 @@
+# caian 05/11/2015
+
+prog lang.in
+
+fix int:id = 1
+fix str:f.out = "file_name"
+
+begin
+
+int:x = 2
+x = x + id
+if(x > 2)
+begin
+write(file_name, x)
+end
+str:file
+if(x eq 2)
+begin
+file = read(file_name)
+end
+
+end

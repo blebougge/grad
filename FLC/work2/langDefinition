@@ -14,6 +14,13 @@ Reserved Words:
     ary     array declaration
 
     :       definition
+    (       open bracket
+    )       close bracket
+
+    #       comment word
+
+    \n      ident end line
+    ,       comma
 
 Variables Types:
     Usage
@@ -58,6 +65,7 @@ Algebric:
 
 Logical:
     >       greater
+    eq      equal
     !=      diffrent
     not     not
     and     and
