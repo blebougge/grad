@@ -63,6 +63,17 @@ def tokenizer(path=None, items=None):
                     lexar = '<' + token + ', ' + items['#'] + '>'
                     lexars[l] = lexar
                     l += 1
+                elif items[line[i]] == items['0']:
+                    token = line[i]
+                    while line[i+1] in list(items.keys()):
+                        if items[line[i+1]] == items['0']:
+                            i += 1
+                            token += line[i]
+                        else:
+                            break
+                    lexar = '<' + token + ', ' + items[line[i]] + '>'
+                    lexars[l] = lexar
+                    l += 1
                 else:
                     token = line[i]
                     lexar = '<' + token + ', ' + items[line[i]] + '>'

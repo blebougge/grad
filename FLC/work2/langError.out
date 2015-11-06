@@ -8,7 +8,7 @@
 <:, DEFINITION>
 <id, ???>
 <=, EQUAL_OP>
-<1, ???>
+<1, NUMBER>
 <;, IDENT>
 <fi, ???>
 <st, ???>
@@ -23,7 +23,7 @@
 <:, DEFINITION>
 <x, ???>
 <=, EQUAL_OP>
-<2, ???>
+<2, NUMBER>
 <;, IDENT>
 <x, ???>
 <x, ???>
@@ -33,7 +33,7 @@
 <if, CONDITIONAL>
 <(, START_PAR>
 <x, ???>
-<2, ???>
+<2, NUMBER>
 <), END_PAR>
 <;, IDENT>
 <begin, START_BRACKET>
@@ -53,7 +53,7 @@
 <;, IDENT>
 <if, CONDITIONAL>
 <eq, EQUAL_LG>
-<2, ???>
+<2, NUMBER>
 <), END_PAR>
 <;, IDENT>
 <bein, ???>

@@ -8,7 +8,7 @@
 <:, DEFINITION>
 <id, ???>
 <=, EQUAL_OP>
-<1, ???>
+<1, NUMBER>
 <;, IDENT>
 <fix, CONST_VAR>
 <str, STRING>
@@ -23,7 +23,7 @@
 <:, DEFINITION>
 <x, ???>
 <=, EQUAL_OP>
-<2, ???>
+<2, NUMBER>
 <;, IDENT>
 <x, ???>
 <=, EQUAL_OP>
@@ -35,7 +35,7 @@
 <(, START_PAR>
 <x, ???>
 <>, GREATER_LG>
-<2, ???>
+<2, NUMBER>
 <), END_PAR>
 <;, IDENT>
 <begin, START_BRACKET>
@@ -57,7 +57,7 @@
 <(, START_PAR>
 <x, ???>
 <eq, EQUAL_LG>
-<2, ???>
+<20, NUMBER>
 <), END_PAR>
 <;, IDENT>
 <begin, START_BRACKET>

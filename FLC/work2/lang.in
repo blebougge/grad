@@ -14,7 +14,7 @@ begin
 write(file_name, x)
 end
 str:file
-if(x eq 2)
+if(x eq 20)
 begin
 file = read(file_name)
 end
