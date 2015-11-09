@@ -1,5 +1,7 @@
 # caian 05/11/2015
 
+import langAuto
+
 def readItems(path=None):
     """
     Return a dictionary based on path file.
@@ -122,7 +124,7 @@ def tokenizer(path=None, items=None):
                 if line[i] == '\n':
                     break
 
-            # uncomment the line to se on the fly
+            # uncomment the line to see on the fly
             # raw_input()
             i += 1
 
@@ -139,6 +141,12 @@ def tokenizer(path=None, items=None):
     fout.close
     """
     return lexars
+
+def tokenizer_new(path=None, items=None):
+    """
+    New tokenizer function.
+    """
+    pass
 
 
 # the real program runs ahead
@@ -181,6 +189,20 @@ fout = open("lang.out", 'w')
 for i in list(lexars.keys()):
     fout.write(str(lexars[i]) + '\n')
 fout.close
+
+# ------ new tokenizer test -------- 
+
+lexars = tokenizer_new("lang.in", items)
+tf.write("# tokenizer - NEW TOKENIZER lang.in lexars\n")
+tf.write(str(lexars) + '\n')
+
+fnewout = open("langNew.out", 'w')
+if lexars != None:
+    for i in list(lexars.keys()):
+        fnewout.write(str(lexars[i]) + '\n')
+fnewout.close
+
+# ------ end of new tokenizer test -------- 
 
 tf.close()
 

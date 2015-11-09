@@ -6,8 +6,8 @@ Reserved Words:
 
     prog    program definition to this language
 
-    begin   begin bracket
-    end     end bracket
+    bgin    begin bracket
+    nd      end bracket
 
     fix     constant declaration
 
@@ -34,27 +34,27 @@ Variables Types:
 
 Loops:
     Usage
-        while(<expression>)
-        begin
-        end
+        whil(<expression>)
+        bgin
+        nd
 
-    while   while loop
+    whil    while loop
 
 Conditional:
     Usage
         if(<expression>)
-        begin
-        end
+        bgin
+        nd
 
     if      conditional
 
 R/W:
     Usage
-        str:f=read(<file_name>)
-        write(<file_name>,f)
+        str:f=rad(<file_name>)
+        writ(<file_name>,f)
 
-    read    read file
-    write   write file
+    rad     read file
+    writ    write file
 
 Algebric:
     +       sum
@@ -65,7 +65,7 @@ Algebric:
 
 Logical:
     >       greater
-    eq      equal
+    q       equal
     !=      diffrent
     not     not
     and     and
