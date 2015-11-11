@@ -302,7 +302,13 @@ def automata_union(automata_list):
                     for reach in auto.transitions[st][letter]: 
                         if reach not in final.states:
                             final.states.append(reach)
-                        final.transitions[st] = { letter : auto.transitions[st][letter] }
+                        if st not in final.transitions.keys():
+                            final.transitions[st] = {}
+                        if letter not in final.transitions[st].keys():
+                            final.transitions[st][letter] = []
+                        if st not in final.transitions[st][letter]:
+                            final.transitions[st][letter].append(reach)
+            
             if st in auto.accept:
                 if st not in final.accept:
                     final.accept.append(st)
@@ -318,5 +324,6 @@ def do_union():
                 rad]
     last = automata_union(automatas)
     lastD = last.determinize()
+    # print(lastD)
 
     return lastD

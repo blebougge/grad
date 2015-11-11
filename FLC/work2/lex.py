@@ -2,6 +2,19 @@
 
 import langAuto
 
+# ----- print automata things start ------
+
+def write_fsm(out, fsm):
+    to_print = "Automata: \n"
+    to_print += "\tstates: " + str(fsm.states) + "\n"
+    to_print += "\talphabet: " + str(fsm.alphabet) + "\n"
+    to_print += "\ttransitions: " + str(fsm.transitions) + "\n"
+    to_print += "\tstart: " + str(fsm.start) + "\n"
+    to_print += "\taccept: " + str(fsm.accept) + "\n"
+    out.write(to_print)
+
+# ----- print automata things end ------
+
 def readItems(path=None):
     """
     Return a dictionary based on path file.
@@ -170,7 +183,7 @@ tf.write(str(lexars) + '\n')
 fitemsout = open("lang.items.out", 'w')
 for i in list(lexars.keys()):
     fitemsout.write(str(lexars[i]) + '\n')
-fitemsout.close
+fitemsout.close()
 
 lexars = tokenizer("langError.in", items)
 tf.write("# tokenizer - langError.in lexars\n")
@@ -179,7 +192,7 @@ tf.write(str(lexars) + '\n')
 ferrorout = open("langError.out", 'w')
 for i in list(lexars.keys()):
     ferrorout.write(str(lexars[i]) + '\n')
-ferrorout.close
+ferrorout.close()
 
 lexars = tokenizer("lang.in", items)
 tf.write("# tokenizer - lang.in lexars\n")
@@ -188,7 +201,7 @@ tf.write(str(lexars) + '\n')
 fout = open("lang.out", 'w')
 for i in list(lexars.keys()):
     fout.write(str(lexars[i]) + '\n')
-fout.close
+fout.close()
 
 # ------ new tokenizer test -------- 
 
@@ -200,9 +213,22 @@ fnewout = open("langNew.out", 'w')
 if lexars != None:
     for i in list(lexars.keys()):
         fnewout.write(str(lexars[i]) + '\n')
-fnewout.close
+fnewout.close()
 
 # ------ end of new tokenizer test -------- 
+
+# ------ automata test ------
+
+master_automata = langAuto.do_union()
+
+fauto = open("automata.out", 'w')
+if master_automata != None:
+    fauto.write(str(master_automata))
+    # write_fsm(fauto, master_automata)
+fauto.close()
+
+# ------ ent of automata test ------- 
+
 
 tf.close()
 

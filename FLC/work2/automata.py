@@ -64,6 +64,50 @@ class Automata(object):
 
         self.actual_state = self.start
 
+    def __repr__(self):
+        """
+        Print the automata on the right way. FINALLY DONE THIS!!
+        """
+         
+        to_print = "Automata: \n"
+        to_print += "\tstates: " + str(self.states) + "\n"
+        to_print += "\talphabet: " + str(self.alphabet) + "\n"
+        to_print += "\ttransitions: {\n\t"
+
+        k = 0
+        for st in list(self.transitions.keys()):
+            to_print += st + " : { "
+            j = 0
+            for l in list(self.transitions[st].keys()):
+                to_print += repr(l) + " : ["
+                if len(self.transitions[st][l]) == 0:
+                    to_print += "] \n\t\t"
+                else:
+                    i = 0
+                    for each in self.transitions[st][l]:
+                        to_print += each
+                        i += 1
+                        if i < len(self.transitions[st][l]):
+                            to_print += ", "
+                        else:
+                            to_print += "]"
+                j += 1
+                if j < len(self.transitions[st].keys()):
+                    to_print += ",\n\t\t"
+                else:
+                    to_print += " }"
+            k += 1
+            if k < len(self.states):
+                to_print += ",\n\t"
+            else:
+                to_print += "\n\t"
+        to_print += "\t}\n"
+            
+        to_print += "\tstart: " + str(self.start) + "\n"
+        to_print += "\taccept: " + str(self.accept) + "\n"
+
+        return to_print
+
     def showstates(self):
         """
         Return a set of all valid states.
@@ -381,12 +425,15 @@ class Automata(object):
                     is_accept = False
 
                     # reached states
-                    reached = trs[state][letter]
+                    if letter in trs[state].keys():
+                        reached = trs[state][letter]
+                    else:
+                        reached = []
                     new_state = ''
                     sequence = []
 
                     # if we have more than one reached state
-                    if len(trs[state][letter]) > 1:
+                    if len(reached) > 1:
 
                         # for each reached state in the list
                         for each in reached:
@@ -437,6 +484,8 @@ class Automata(object):
                                 # for each state in letter transition
                                 for st in trsa[new_state][l]:
 
+                                    # print("new_state: ", new_state)
+                                    # print("composition: ", composition)
                                     # if state is in the list of new_states
                                     if st in list(composition.keys()):
 
@@ -464,9 +513,10 @@ class Automata(object):
                             new_accept.append(new_state)
 
                     # else, we just add the simple state
-                    else:
+                    elif len(reached) == 1:
                         # print('trs', state, letter, trs[state][letter])
-                        nonE._addstate(trsa, { state : [letter, trs[state][letter]] } )
+                        nonE._addstate(trsa, { state : [letter, reached] } )
+                    
 
             # now we need to put the trsa in trs
             trs = copy.deepcopy(trsa)
@@ -477,6 +527,11 @@ class Automata(object):
             # then, check if the automata now is deterministic
             if nonE._isdeterministic(trs):
                 over = True
+        for each in list(composition.keys()):
+            for st in composition[each]:
+                if st in list(trs.keys()):
+                    del trs[st]
+                    nonE.states.remove(st)
             
         # adds to the new_states
         for each in list(composition.keys()):
