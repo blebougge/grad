@@ -1,29 +1,20 @@
-<PROG>      := <COM> prog <FILE_ID> <IDENT> <CONST> <BLOCK> | <COM> prog <FILE_ID> <IDENT> <BLOCK>
-<COM>       := # <LETTER> <COMM> | # <NUM> <COMM> | &
-<COMM>      := <LETTER> <COMM> | <NUM> <COMM>
-<FILE_ID>   := <LETTER>.<LETTER>
+<PROG>      := <COM> prog ID ; <CONST> <BLOCK> | <COM> prog ID ; <BLOCK>
+<COM>       := # ID 
 <BLOCK>     := <BEGIN> <BODY> <END>
-<BEGIN>     := bgin <IDENT>
-<END>       := end <IDENT>
-<BODY>      := <EXPR> <BODY> | <EXPR> | <DCLR_VAR> <BODY> | <DCLR_VAR> | <IF> <BODY> | <IF> | <WHIL> <BODY> | <WHIL>
-<EXPR>      := <DCLR_VAR> | <VAR>
-<FLN>       := <LOGIC> <IDENT> | <FUNC> <IDENT> | <NUMERIC> <IDENT>
-<LOGIC>     := <ID> <LOGIC_OP> <LOGIC> | <ID> | <NUM> <LOGIC_OP> <LOGIC> | <NUM>
-<LOGIC_OP>  := > | q | != | not | or | and
-<NUMERIC>   := <ID> <NUM_OP> <NUMERIC> | <ID> | <NUM> <NUM_OP> <NUMERIC> | <NUM>
-<NUM_OP>    := + | - | * | /
+<BEGIN>     := begin ;
+<END>       := end ;
+<BODY>      := <EXPR> | <IF> | <WHILE> | &
+<EXPR>      := <DCLR_VAR> | <FLN>
+<FLN>       := <FUNC> ; | <LOGIC> ; | <NUMERIC> ;
+<LOGIC>     := ID <LOGIC'>
+<LOGIC'>    := LOG ID <LOGIC'> | &
+<NUMERIC>   := ID = ID <NUMERIC'> 
+<NUMERIC'>  := OP ID <NUMERIC'> | &
 <FUNC>      := <FUNC_NAME>(<PARAM>) | <FUNC_NAME>()
-<FUNC_NAME> := writ | rad
-<PARAM>     := <ID>, <PARAM> | <ID>
-<IF>        := if(<LOGIC>) <IDENT> <BLOCK>
-<WHIL>      := whil(<LOGIC>) <IDENT> <BLOCK>
+<FUNC_NAME> := write | read
+<PARAM>     := ID <PARAM'>
+<PARAM'>    := , ID <PARAM'> | &
+<IF>        := if(<LOGIC>) ; <BLOCK>
+<WHILE>     := while(<LOGIC>) ; <BLOCK>
 <CONST>     := fix <DCLR_VAR>
-<DCLR_VAR>  := <TYPE>:<VAR> | <STR>
-<VAR>       := <ID> = <LOGIC> <IDENT> | <ID> = <NUMERIC> <IDENT> | <ID> = <FUNC> <IDENT> | <ID> <IDENT>
-<STR>       := str:<ID> = <STR_DEF> <IDENT> | str:<ID> <IDENT> | str:<ID> = <FUNC> <IDENT>
-<STR_DEF>   := "<LETTER>"
-<TYPE>      := int | dob | bl
-<ID>        := <LETTER>
-<LETTER>    := a~z<LETTER> | A~Z<LETTER> | a~z | A~Z | _<LETTER> | _
-<NUM>       := 1~0<NUM> | 1~0
-<IDENT>     := ;
+<DCLR_VAR>  := TYPE:ID = ID ;

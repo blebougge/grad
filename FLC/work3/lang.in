@@ -5,18 +5,18 @@ prog lang.in
 fix int:id = 1
 fix str:f.out = "file_name"
 
-bgin
+begin
 
 int:x = 2
 x = x + id
 if(x > 2)
-bgin
-writ(file_name, x)
-nd
+begin
+write(file_name, x)
+end
 str:file
-if(x q 20)
-bgin
+if(x eq 20)
+begin
 file = read(file_name)
-nd
+end
 
-nd
+end
