@@ -1,20 +1,17 @@
-<PROG>      := <COM> prog ID ; <CONST> <BLOCK> | <COM> prog ID ; <BLOCK>
-<COM>       := # ID 
-<BLOCK>     := <BEGIN> <BODY> <END>
-<BEGIN>     := begin ;
-<END>       := end ;
+<PROG>      := # ID ; prog ID ; <CONST> <BLOCK> | # ID ; prog ID ; <BLOCK>
+<BLOCK>     := begin ; <BODY> end ;
 <BODY>      := <EXPR> | <IF> | <WHILE> | &
-<EXPR>      := <DCLR_VAR> | <FLN>
+<EXPR>      := <DCLR_VAR> <BODY> | ID = <FLN> <BODY> | <FLN> <BODY>
 <FLN>       := <FUNC> ; | <LOGIC> ; | <NUMERIC> ;
-<LOGIC>     := ID <LOGIC'>
-<LOGIC'>    := LOG ID <LOGIC'> | &
-<NUMERIC>   := ID = ID <NUMERIC'> 
-<NUMERIC'>  := OP ID <NUMERIC'> | &
+<LOGIC>     := ID <LOGIC'> | CONST <LOGIC'>
+<LOGIC'>    := LOG ID <LOGIC'> | LOG CONST <LOGIC'> | &
+<NUMERIC>   := ID = ID <NUMERIC'> | ID = CONST <NUMERIC'>
+<NUMERIC'>  := OP ID <NUMERIC'> | OP CONST <NUMERIC'> | &
 <FUNC>      := <FUNC_NAME>(<PARAM>) | <FUNC_NAME>()
 <FUNC_NAME> := write | read
-<PARAM>     := ID <PARAM'>
-<PARAM'>    := , ID <PARAM'> | &
-<IF>        := if(<LOGIC>) ; <BLOCK>
-<WHILE>     := while(<LOGIC>) ; <BLOCK>
+<PARAM>     := ID <PARAM'> | CONST <PARAM'>
+<PARAM'>    := , ID <PARAM'> | CONST <PARAM'> | &
+<IF>        := if(<LOGIC>) ; <BLOCK> <BODY>
+<WHILE>     := while(<LOGIC>) ; <BLOCK> <BODY>
 <CONST>     := fix <DCLR_VAR>
-<DCLR_VAR>  := TYPE:ID = ID ;
+<DCLR_VAR>  := TYPE:ID = CONST ; | TYPE:ID = ID ;
