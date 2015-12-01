@@ -2,19 +2,6 @@
 
 import langAuto
 
-# ----- print automata things start ------
-
-def write_fsm(out, fsm):
-    to_print = "Automata: \n"
-    to_print += "\tstates: " + str(fsm.states) + "\n"
-    to_print += "\talphabet: " + str(fsm.alphabet) + "\n"
-    to_print += "\ttransitions: " + str(fsm.transitions) + "\n"
-    to_print += "\tstart: " + str(fsm.start) + "\n"
-    to_print += "\taccept: " + str(fsm.accept) + "\n"
-    out.write(to_print)
-
-# ----- print automata things end ------
-
 def readItems(path=None):
     """
     Return a dictionary based on path file.
@@ -155,11 +142,38 @@ def tokenizer(path=None, items=None):
     """
     return lexars
 
-def tokenizer_new(path=None, items=None):
+def tokenizer_new(path=None, atm=None, items=None):
     """
     New tokenizer function.
+        path    path of the file to be readed
+        atm     automata to analize
+        items   what every item is
     """
-    pass
+    if items != None:
+        it = items
+    else:
+        it = readItems()
+
+    pin = "lang.in"
+    if path != None:
+        pin = path
+
+    f = open(pin, 'r')
+
+    line = f.readline()
+    l = 0
+    lexars = {}
+
+    while line != '':
+        lexar = ''
+        token = ''
+
+        i = 0
+        while line[i] != '\n':
+            # do from here.
+            i += 1
+
+        line = f.readline()
 
 
 # the real program runs ahead
@@ -203,20 +217,6 @@ for i in list(lexars.keys()):
     fout.write(str(lexars[i]) + '\n')
 fout.close()
 
-# ------ new tokenizer test -------- 
-
-lexars = tokenizer_new("lang.in", items)
-tf.write("# tokenizer - NEW TOKENIZER lang.in lexars\n")
-tf.write(str(lexars) + '\n')
-
-fnewout = open("langNew.out", 'w')
-if lexars != None:
-    for i in list(lexars.keys()):
-        fnewout.write(str(lexars[i]) + '\n')
-fnewout.close()
-
-# ------ end of new tokenizer test -------- 
-
 # ------ automata test ------
 
 master_automata = langAuto.do_union()
@@ -227,8 +227,21 @@ if master_automata != None:
     # write_fsm(fauto, master_automata)
 fauto.close()
 
-# ------ ent of automata test ------- 
+# ------ end of automata test ------- 
 
+# ------ new tokenizer test -------- 
+
+lexars = tokenizer_new("lang.in", master_automata, items)
+tf.write("# tokenizer - NEW TOKENIZER lang.in lexars\n")
+tf.write(str(lexars) + '\n')
+
+fnewout = open("langNew.out", 'w')
+if lexars != None:
+    for i in list(lexars.keys()):
+        fnewout.write(str(lexars[i]) + '\n')
+fnewout.close()
+
+# ------ end of new tokenizer test -------- 
 
 tf.close()
 
