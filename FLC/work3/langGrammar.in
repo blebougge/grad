@@ -1,22 +1,20 @@
 <PROG>      := # ID ; prog ID ; <PROG'>
-<PROG'>     := <CONST> <BLOCK> | <BLOCK>
+<PROG'>     := <FIX> <BLOCK> | <BLOCK>
 <BLOCK>     := begin ; <BODY> end ;
 <BODY>      := <EXPR> | <IF> | <WHILE> | &
-<EXPR>      := <DCLR_VAR> <BODY> | <FLN> <BODY>
-<FLN>       := <FUNC> ; | ID = <LN>
-<LN>        := <LOGIC> ; | <NUMERIC> ;
+<EXPR>      := <DCLR_VAR> ; <BODY> | <FLN> ; <BODY>
+<FLN>       := <FUNC> | ID = <LN>
+<LN>        := <LOGIC> | <NUMERIC>
 <LOGIC>     := ID <LOGIC'> | CONST <LOGIC'>
-<LOGIC'>    := LOG <LOGIC''> | &
-<LOGIC''>   := ID <LOGIC'> | CONST <LOGIC'>
+<LOGIC'>    := LOG <LOGIC> | &
 <NUMERIC>   := ID <NUMERIC'> | CONST <NUMERIC'>
-<NUMERIC'>  := OP <NUMERIC''> | &
-<NUMERIC''> := ID <NUMERIC'> | CONST <NUMERIC'>
+<NUMERIC'>  := OP <NUMERIC> | &
 <FUNC>      := <FUNC_NAME>(<PARAM>)
 <FUNC_NAME> := write | read
 <PARAM>     := ID <PARAM'> | CONST <PARAM'> | &
 <PARAM'>    := , ID <PARAM'> | , CONST <PARAM'> | &
 <IF>        := if(<LOGIC>) ; <BLOCK> <BODY>
 <WHILE>     := while(<LOGIC>) ; <BLOCK> <BODY>
-<CONST>     := fix <DCLR_VAR>
+<FIX>       := fix <DCLR_VAR>
 <DCLR_VAR>  := TYPE:ID = <VAR>
-<VAR>       := CONST ; | ID ;
+<VAR>       := CONST | ID
