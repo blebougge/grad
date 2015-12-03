@@ -1,0 +1,20 @@
+<PROG> $
+<PROG'> $
+<BLOCK> $ TYPE ID write read if while end
+<BODY> end
+<EXPR> end
+<FLN> ;
+<LN> ;
+<LOGIC> ; )
+<LOGIC'> ; )
+<NUMERIC> ;
+<NUMERIC'> ;
+<FUNC> ;
+<FUNC_NAME> (
+<PARAM> )
+<PARAM'> )
+<IF> end
+<WHILE> end
+<FIX> begin
+<DCLR_VAR> ; begin
+<VAR> ; begin

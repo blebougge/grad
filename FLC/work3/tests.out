@@ -1,0 +1,66 @@
+# FIRST
+<NUMERIC> := ID CONST 
+<LOGIC'> := LOG & 
+<FLN> := ID write read 
+<NUMERIC'> := OP & 
+<PARAM'> := , & 
+<FUNC_NAME> := write read 
+<BODY> := & TYPE ID write read if while 
+<IF> := if 
+<VAR> := CONST ID 
+<PROG> := # 
+<LN> := ID CONST 
+<LOGIC> := ID CONST 
+<BLOCK> := begin 
+<WHILE> := while 
+<PROG'> := fix begin 
+<FUNC> := write read 
+<EXPR> := TYPE ID write read 
+<PARAM> := ID CONST & 
+<DCLR_VAR> := TYPE 
+<FIX> := fix 
+
+# FOLLOW
+<NUMERIC> := ; 
+<LOGIC'> := ; ) 
+<FLN> := ; 
+<NUMERIC'> := ; 
+<PARAM'> := ) 
+<FUNC_NAME> := ( 
+<BODY> := end 
+<IF> := end 
+<VAR> := ; begin 
+<PROG> := $ 
+<LN> := ; 
+<LOGIC> := ; ) 
+<BLOCK> := $ TYPE ID write read if while end 
+<WHILE> := end 
+<PROG'> := $ 
+<FUNC> := ; 
+<EXPR> := end 
+<PARAM> := ) 
+<DCLR_VAR> := ; begin 
+<FIX> := begin 
+
+# TABLE
+<NUMERIC> := { 25 : ID } { 26 : CONST } 
+<LOGIC'> := { 24 : ; } { 44 : ) } { 23 : LOG } 
+<FLN> := { 18 : read } { 17 : write } { 16 : ID } 
+<NUMERIC'> := { 27 : OP } { 28 : ; } 
+<PARAM'> := { 37 : ) } { 36 : , } 
+<FUNC_NAME> := { 32 : read } { 31 : write } 
+<BODY> := { 11 : end } { 10 : while } { 44 : $ } { 5 : TYPE } { 7 : write } { 6 : ID } { 9 : if } { 8 : read } 
+<IF> := { 38 : if } 
+<VAR> := { 42 : CONST } { 43 : ID } 
+<PROG> := { 1 : # } 
+<LN> := { 19 : ID } { 20 : CONST } 
+<LOGIC> := { 21 : ID } { 22 : CONST } 
+<BLOCK> := { 4 : begin } 
+<WHILE> := { 39 : while } 
+<PROG'> := { 3 : begin } { 2 : fix } 
+<FUNC> := { 30 : read } { 29 : write } 
+<EXPR> := { 13 : ID } { 12 : TYPE } { 15 : read } { 14 : write } 
+<PARAM> := { 33 : ID } { 35 : ) } { 34 : CONST } 
+<DCLR_VAR> := { 41 : TYPE } 
+<FIX> := { 40 : fix } 
+

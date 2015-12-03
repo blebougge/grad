@@ -1,0 +1,20 @@
+<PROG> #
+<PROG'> fix begin
+<BLOCK> begin
+<BODY> & TYPE ID write read if while
+<EXPR> TYPE ID write read
+<FLN> ID write read
+<LN> ID CONST
+<LOGIC> ID CONST
+<LOGIC'> LOG &
+<NUMERIC> ID CONST
+<NUMERIC'> OP &
+<FUNC> write read
+<FUNC_NAME> write read
+<PARAM> ID CONST &
+<PARAM'> , &
+<IF> if
+<WHILE> while
+<FIX> fix
+<DCLR_VAR> TYPE
+<VAR> CONST ID
