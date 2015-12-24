@@ -4,7 +4,6 @@
 <BODY> & TYPE ID write read if while
 <EXPR> TYPE ID write read
 <FLN> ID write read
-<LN> ID CONST
 <LOGIC> ID CONST
 <LOGIC'> LOG &
 <NUMERIC> ID CONST

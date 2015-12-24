@@ -1,20 +1,21 @@
 <PROG> 1 #
 <PROG'> 2 fix 3 begin
 <BLOCK> 4 begin
-<BODY> 5 TYPE 6 ID 7 write 8 read 9 if 10 while 11 end 44 $
-<EXPR> 12 TYPE 13 ID 14 write 15 read
-<FLN> 16 ID 17 write 18 read
-<LN> 19 ID 20 CONST
-<LOGIC> 21 ID 22 CONST
-<LOGIC'> 23 LOG 24 ; 44 )
-<NUMERIC> 25 ID 26 CONST
-<NUMERIC'> 27 OP 28 ;
-<FUNC> 29 write 30 read
-<FUNC_NAME> 31 write 32 read
-<PARAM> 33 ID 34 CONST 35 )
-<PARAM'> 36 , 37 )
-<IF> 38 if
-<WHILE> 39 while
-<FIX> 40 fix
-<DCLR_VAR> 41 TYPE
-<VAR> 42 CONST 43 ID
+<BODY> 5 TYPE 5 ID 5 write 5 read 6 if 7 while 8 ; 8 end
+<EXPR> 10 TYPE 9 ID 11 write 11 read
+<FLN> 13 ID 12 write 12 read
+<LOGIC> 14 ID 15 CONST
+<LOGIC'> 16 LOG 17 ; 17 )
+<NUMERIC> 18 ID 19 CONST
+<NUMERIC'> 20 OP 21 ; 21 )
+<FUNC> 22 write 22 read
+<FUNC_NAME> 23 write 24 read
+<PARAM> 25 ID 26 CONST 27 )
+<PARAM'> 28 , 29 )
+<PARAM''> 30 ID 31 CONST
+<IF> 32 if
+<WHILE> 33 while
+<FIX> 34 fix
+<DCLR_VAR> 35 TYPE
+<VAR> 36 ID
+<VAR'> 37 ID 37 CONST 38 read

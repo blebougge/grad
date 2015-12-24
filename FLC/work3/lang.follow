@@ -4,7 +4,6 @@
 <BODY> end
 <EXPR> end
 <FLN> ;
-<LN> ;
 <LOGIC> ; )
 <LOGIC'> ; )
 <NUMERIC> ;

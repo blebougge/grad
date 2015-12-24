@@ -3,8 +3,7 @@
 <BLOCK>     := begin ; <BODY> end ;
 <BODY>      := <EXPR> | <IF> | <WHILE> | &
 <EXPR>      := <DCLR_VAR> ; <BODY> | <FLN> ; <BODY>
-<FLN>       := <FUNC> | ID = <LN>
-<LN>        := <LOGIC> | <NUMERIC>
+<FLN>       := <FUNC> | <VAR>
 <LOGIC>     := ID <LOGIC'> | CONST <LOGIC'>
 <LOGIC'>    := LOG <LOGIC> | &
 <NUMERIC>   := ID <NUMERIC'> | CONST <NUMERIC'>
@@ -15,6 +14,7 @@
 <PARAM'>    := , ID <PARAM'> | , CONST <PARAM'> | &
 <IF>        := if(<LOGIC>) ; <BLOCK> <BODY>
 <WHILE>     := while(<LOGIC>) ; <BLOCK> <BODY>
-<FIX>       := fix <DCLR_VAR>
-<DCLR_VAR>  := TYPE:ID = <VAR>
-<VAR>       := CONST | ID
+<FIX>       := fix <DCLR_VAR> ;
+<DCLR_VAR>  := TYPE : <VAR>
+<VAR>       := ID = <VAR'>
+<VAR'>      := <NUMERIC> | <FUNC>
